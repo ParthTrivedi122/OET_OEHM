@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-   <!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:43 GMT -->
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -184,8 +183,8 @@
                                        </li>
                                        <li class="submenu"><a href="javascript:void(0);"> <span> Offline</span> <span class="menu-arrow"></span></a>
                                           <ul>
-                                             <li><a href="students_oehm_sem5_offline.html">OEHM</a></li>
-                                             <li><a href="students_oet_sem5_offline.html">OET</a></li>
+                                             <li><a href="students_oehm_sem6_offline.html">OEHM</a></li>
+                                             <li><a href="students_oet_sem6_offline.html">OET</a></li>
                                           </ul>
                                        </li>
                                     </ul>
@@ -200,15 +199,15 @@
                                     <ul>
                                        <li class="submenu"><a href="javascript:void(0);"> <span> Online</span> <span class="menu-arrow"></span></a>
                                           <ul>
-                                             <li><a href="students_oehm_sem5_online.html">OEHM</a></li>
-                                             <li><a href="students_oet_sem5_online.html">OET</a></li>
+                                             <li><a href="students_oehm_sem7_online.html">OEHM</a></li>
+                                             <li><a href="students_oet_sem7_online.html">OET</a></li>
                                           </ul>
                                        
                                        </li>
                                        <li class="submenu"><a href="javascript:void(0);"> <span> Offline</span> <span class="menu-arrow"></span></a>
                                           <ul>
-                                             <li><a href="students_oehm_sem5_offline.html">OEHM</a></li>
-                                             <li><a href="students_oet_sem5_offline.html">OET</a></li>
+                                             <li><a href="students_oehm_sem7_offline.html">OEHM</a></li>
+                                             <li><a href="students_oet_sem7_offline.html">OET</a></li>
                                           </ul>
                                        </li>
                                     </ul>
@@ -365,7 +364,7 @@
         async function getdata() {
             var tbody = '';
             var data = await axios({
-                url: "http://localhost:8000/getStudentDataSem5OehmOnline",
+                url: "http://localhost:8000/getStudentDataSem7OehmOnline",
                 method: "post"
             });
             console.log(data.data.result);
@@ -392,7 +391,7 @@
                                              <a href="edit-subject.html" class="btn btn-sm bg-success-light mr-2">
                                              <i class="fas fa-pen"></i>
                                              </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent(${list[i].student_id})">
+                                             <a href="#" class="btn btn-sm bg-danger-light">
                                              <i class="fas fa-trash"></i>
                                              </a>
                                           </div>
@@ -404,23 +403,6 @@
         }
         }
         getdata();
-
-        async function deleteStudent(id){
-         var deleteStudent = await axios({
-                url: "http://localhost:8000/deleteStudentDataSem5OehmOnline",
-                method: "post",
-                data:{id:id}
-            });
-            console.log(deleteStudent);
-            console.log(deleteStudent.data.deleted);
-            var result=deleteStudent.data.deleted;
-            if(result=="yes"){
-               alert("Student Deleted");
-               getdata();
-            }else{
-               alert("Error while deleting");
-            }
-        }
         
         </script>
    </body>
