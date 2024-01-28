@@ -392,7 +392,7 @@
                                              <a href="edit-subject.html" class="btn btn-sm bg-success-light mr-2">
                                              <i class="fas fa-pen"></i>
                                              </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
+                                             <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent(${list[i].student_id})">
                                              <i class="fas fa-trash"></i>
                                              </a>
                                           </div>
@@ -404,6 +404,23 @@
         }
         }
         getdata();
+
+        async function deleteStudent(id){
+         var deleteStudent = await axios({
+                url: "http://localhost:8000/deleteStudentDataSem5OehmOnline",
+                method: "post",
+                data:{id:id}
+            });
+            console.log(deleteStudent);
+            console.log(deleteStudent.data.deleted);
+            var result=deleteStudent.data.deleted;
+            if(result=="yes"){
+               alert("Student Deleted");
+               getdata();
+            }else{
+               alert("Error while deleting");
+            }
+        }
         
         </script>
    </body>

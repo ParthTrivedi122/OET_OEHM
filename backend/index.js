@@ -2,6 +2,7 @@ const express= require('express');
 const app= express();
 const cors = require('cors');
 const mysql = require('mysql');
+const formidable = require('express-formidable');
 // const session = require("express-session");
 // const Login=require("./schema/registeredSchema");
 // const Customer=require("./schema/customerSchema");
@@ -18,19 +19,21 @@ app.use(cors({
   methods: 'GET,POST',
   allowedHeaders: 'Content-Type,Authorization',
 }));
-var con = mysql.createConnection({
-    host: "13.234.60.137",
-    user: "admin_kjsce",
-    password: "uP58a70f#",
-    database: "oet-oehm"
-  });
 
+app.use(formidable());
 // var con = mysql.createConnection({
-//     host: "localhost",
-//     user: "root",
-//     password: "",
+//     host: "13.234.60.137",
+//     user: "admin_kjsce",
+//     password: "uP58a70f#",
 //     database: "oet-oehm"
 //   });
+
+var con = mysql.createConnection({
+    host: "localhost",  
+    user: "root",
+    password: "",
+    database: "oet-oehm"
+  });
 
 
 app.post("/getdata",async(req,res)=>{
@@ -71,7 +74,11 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
                   if (err) reject(err);
-                  resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+                  if (results && results.length > 0) {
+                    resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+                } else {
+                    resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
+                }
               });
           });
       });
@@ -83,6 +90,17 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
       console.error("Error retrieving data:", err);
       res.status(500).json({ error: "Internal server error" });
   }
+});
+
+
+app.post("/deleteStudentDataSem5OehmOnline",async(req,res)=>{
+   
+  con.query("delete FROM students_online_oehm WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+    res.json({"deleted":"yes"});
+  });
+
 });
 
 
