@@ -314,7 +314,7 @@
                             </ul>
                         </div>
                         <div class="col-auto text-right float-right ml-auto">
-                            <a href="#" class="btn btn-outline-primary mr-2"><i class="fas fa-download"></i>
+                            <a href="#" class="btn btn-outline-primary mr-2" onclick="downloadExcel()"><i class="fas fa-download"></i>
                                 Download</a>
                             <a href="add-subject.html" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                         </div>
@@ -380,6 +380,25 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Do you really want to Delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+            <button type="button" class="btn btn-primary" onclick="deletePermission()"
+                data-dismiss="modal">Yes</button>
+        </div>
+    </div>
+</div>
+</div>
 <script src="assets/js/jquery-3.6.0.min.js"></script>
 <script src="assets/js/popper.min.js"></script>
 <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
@@ -387,71 +406,94 @@
 <script src="assets/plugins/datatables/datatables.min.js"></script>
 <script src="assets/js/script.js"></script>
 <script>
+function downloadExcel() {
+            // Get table HTML content
+        var table = document.getElementById('data-table');
+        var html = table.outerHTML;
 
-    async function getdata() {
-        var tbody = '';
-        var data = await axios({
-            url: "http://localhost:8000/getCourseDataSem5Oet",
-            method: "post"
-        });
-        console.log(data.data.result);
-        var list = data.data.result;
-        if (data) {
-            for (let i = 0; i < list.length; i++) {
-                console.log(list[i].course_name);
-                tbody = tbody + `<tr>
-                                   <td>${list[i].course_id}</td>
-                                   <td>
-                                      <h2>
-                                         <a>${list[i].course_name}</a>
-                                      </h2>
-                                   </td>
-                                   <td>${list[i].semester}</td>
-                                   <td>${list[i].faculty_name}</td>
-                                   <td>${list[i].faculty_email}</td>
-                                   <td class="text-right">
-                                      <div class="actions">
-                                         <a href="edit-subject.html" class="btn btn-sm bg-success-light mr-2">
-                                         <i class="fas fa-pen"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent('${list[i].course_id}')" data-toggle="modal" data-target="#exampleModal">
-                                        <i class="fas fa-trash"></i>
-                                         </a>
-                                      </div>
-                                   </td>
-                                </tr>
-                                `;
-            }
-            document.getElementById('tbody').innerHTML = tbody;
+        // Create a Blob with the HTML content
+        var blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+
+        // Create a data URI for the Blob
+        var url = window.URL.createObjectURL(blob);
+
+        // Create a link element and set its attributes
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.xls';
+
+        // Append the link to the document and trigger a click event
+        document.body.appendChild(a);
+        a.click();
+
+        // Remove the link from the document and revoke the Blob URL
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
         }
-    }
-    getdata();
-
-    var deletestdID;
-    async function deletePermission() {
-
-        console.log("id:" + deletestdID);
-        var deleteStudent = await axios({
-            url: "http://localhost:8000/deleteSubjectDataSem5Oet",
-            method: "post",
-            data: { id: deletestdID }
-        });
-        console.log(deleteStudent);
-        console.log(deleteStudent.data.deleted);
-        var result = deleteStudent.data.deleted;
-        if (result == "yes") {
-            //alert("Student Deleted");
-            getdata();
-        } else {
-            alert("Error while deleting");
+async function getdata() {
+    var tbody = '';
+    var data = await axios({
+        url: "http://localhost:8000/getCourseDataSem7Oet",
+        method: "post"
+    });
+    console.log(data.data.result);
+    var list = data.data.result;
+    if (data) {
+        for (let i = 0; i < list.length; i++) {
+            console.log(list[i].course_name);
+            tbody = tbody + `<tr>
+                               <td>${list[i].course_id}</td>
+                               <td>
+                                  <h2>
+                                     <a>${list[i].course_name}</a>
+                                  </h2>
+                               </td>
+                               <td>${list[i].semester}</td>
+                               <td>${list[i].faculty_name}</td>
+                               <td>${list[i].faculty_email}</td>
+                               <td class="text-right">
+                                  <div class="actions">
+                                     <a href="edit-subject.html" class="btn btn-sm bg-success-light mr-2">
+                                     <i class="fas fa-pen"></i>
+                                     </a>
+                                     <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent('${list[i].course_id}')" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="fas fa-trash"></i>
+                                     </a>
+                                  </div>
+                               </td>
+                            </tr>
+                            `;
         }
+        document.getElementById('tbody').innerHTML = tbody;
     }
+}
+getdata();
+
+var deletestdID;
+async function deletePermission() {
+
+    console.log("id:" + deletestdID);
+    var deleteStudent = await axios({
+        url: "http://localhost:8000/deleteSubjectDataSem5Oet",
+        method: "post",
+        data: { id: deletestdID }
+    });
+    console.log(deleteStudent);
+    console.log(deleteStudent.data.deleted);
+    var result = deleteStudent.data.deleted;
+    if (result == "yes") {
+        //alert("Student Deleted");
+        getdata();
+    } else {
+        alert("Error while deleting");
+    }
+}
 
 
-    function deleteStudent(id) {
-        console.log(id);
-        deletestdID = id;
-    }
+function deleteStudent(id) {
+    console.log(id);
+    deletestdID = id;
+}
 
 </script>
 </body>
