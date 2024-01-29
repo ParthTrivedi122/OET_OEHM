@@ -304,10 +304,10 @@ app.post("/getStudentDataSem7OehmOnline", async (req, res) => {
 });
 
 app.post("/deleteStudentDataSem5OehmOnline",async(req,res)=>{
-   
-  con.query("delete FROM students_online_oehm WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
+   console.log(req.fields.id);
+  con.query("delete FROM students_online_oehm WHERE student_id="+req.fields.id+"", function (err, result, fields) {
     if (err) throw err;
-    console.log(result);
+    console.log("result is"+result);
     res.json({"deleted":"yes"});
   });
 
@@ -322,6 +322,29 @@ app.post("/deleteStudentDataSem5OetOnline",async(req,res)=>{
   });
 
 });
+
+
+app.post("/deleteSubjectDataSem5Oehm",async(req,res)=>{
+   console.log("subject_id"+req.fields.id);
+  con.query("delete FROM courses_offline_oehm WHERE course_id='"+req.fields.id+"'", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+    res.json({"deleted":"yes"});
+  });
+
+  
+
+});
+
+app.post("/deleteSubjectDataSem5Oet",async(req,res)=>{
+  console.log("subject_id"+req.fields.id);
+ con.query("delete FROM courses_offline_oet WHERE course_id='"+req.fields.id+"'", function (err, result, fields) {
+   if (err) throw err;
+   console.log(result);
+   res.json({"deleted":"yes"});
+ });
+});
+
 
 app.post("/deleteStudentDataSem6OetOnline",async(req,res)=>{
    

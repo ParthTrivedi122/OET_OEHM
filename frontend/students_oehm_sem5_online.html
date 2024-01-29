@@ -423,9 +423,9 @@
         getdata();
         var deletestdID;
         async function deletePermission(){
-        
+        console.log(deletestdID);
          var deleteStudent = await axios({
-                url: "http://localhost:8000/deleteStudentDataSem5OetOnline",
+                url: "http://localhost:8000/deleteStudentDataSem5OehmOnline",
                 method: "post",
                 data:{id:deletestdID}
             });
@@ -442,6 +442,7 @@
         
 
         async function deleteStudent(id){
+         console.log(id);
          deletestdID=id;
       }
         
