@@ -120,7 +120,7 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oehm WHERE semester = '5'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -128,7 +128,7 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   if (results && results.length > 0) {
                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
                 } else {
@@ -152,7 +152,7 @@ app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oehm WHERE semester = '6'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -160,7 +160,7 @@ app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   resolve({ course_name: results[0].course_name, domain: results[0].Domain });
               });
           });
@@ -175,12 +175,68 @@ app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
   }
 });
 
+app.post("/getCourseOehmData",async(req,res)=>{
+  console.log(req.fields.id);
+  con.query("SELECT * FROM courses_offline_oehm WHERE course_id = '"+req.fields.id+"'", function (err, result, fields) {
+    if (err) throw err;
+    res.json({"result":result});
+});
+});
+
+
+// app.post("/getStudentOehmOnlineData",async(req,res)=>{
+//   console.log(req.fields.id);
+// try {
+//   const result = await new Promise((resolve, reject) => {
+//     con.query("SELECT * FROM students_online_oehm WHERE student_id = '" + req.fields.id + "'", function (err, result, fields) {
+//       console.log(result[0].course_id);
+//       if (err) throw err;
+//       con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [result[0].course_id], function (err, courses, fields) {
+//         console.log(courses);
+//           if (err) throw err;
+//           resolve({"result": result, "courses": courses}); 
+//       });
+//   });
+//   });
+
+// } catch (err) {
+//   console.error("Error retrieving data:", err);
+//   res.status(500).json({ error: "Internal server error" });
+// }
+// });
+
+app.post("/getCourseOetData",async(req,res)=>{
+  console.log(req.fields.id);
+  con.query("SELECT * FROM courses_offline_oet WHERE course_id = '"+req.fields.id+"'", function (err, result, fields) {
+    if (err) throw err;
+    res.json({"result":result});
+});
+});
+
+app.post("/editOehmCourse",async(req,res)=>{
+  con.query("UPDATE courses_offline_oehm SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"'", function (err, result, fields) {
+    if (err) throw err;
+    console.log("result is" + result);
+    res.json({"updated": "yes"});
+});
+
+});
+
+app.post("/editOetCourse",async(req,res)=>{
+  con.query("UPDATE courses_offline_oet SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"'", function (err, result, fields) {
+    if (err) throw err;
+    console.log("result is" + result);
+    res.json({"updated": "yes"});
+});
+
+});
+
 
 app.post("/getStudentDataSem6OetOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oet WHERE semester = '6'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -188,7 +244,7 @@ app.post("/getStudentDataSem6OetOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   if (results && results.length > 0) {
                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
                 } else {
@@ -212,7 +268,7 @@ app.post("/getStudentDataSem5OetOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oet WHERE semester = '5'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -220,7 +276,7 @@ app.post("/getStudentDataSem5OetOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   if (results && results.length > 0) {
                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
                 } else {
@@ -244,7 +300,7 @@ app.post("/getStudentDataSem7OetOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oet WHERE semester = '7'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -252,7 +308,7 @@ app.post("/getStudentDataSem7OetOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   if (results && results.length > 0) {
                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
                 } else {
@@ -276,7 +332,7 @@ app.post("/getStudentDataSem7OehmOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
           con.query("SELECT * FROM students_online_oehm WHERE semester = '7'", function (err, result, fields) {
-              if (err) reject(err);
+              if (err) throw err;
               resolve(result);
           });
       });
@@ -284,7 +340,7 @@ app.post("/getStudentDataSem7OehmOnline", async (req, res) => {
       const courseDetailsPromises = result.map(student => {
           return new Promise((resolve, reject) => {
               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-                  if (err) reject(err);
+                  if (err) throw err;
                   if (results && results.length > 0) {
                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
                 } else {

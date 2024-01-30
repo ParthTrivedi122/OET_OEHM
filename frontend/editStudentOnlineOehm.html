@@ -134,7 +134,7 @@
             <div class="sidebar-inner slimscroll">
                <div id="sidebar-menu" class="sidebar-menu">
                   <ul>
-                      <ul>
+                     
                     
                      
                      <li class="">
@@ -283,11 +283,8 @@
                <div class="page-header">
                   <div class="row align-items-center">
                      <div class="col">
-                        <h3 class="page-title">Add Students</h3>
-                        <ul class="breadcrumb">
-                           <li class="breadcrumb-item"><a href="students.html">Students</a></li>
-                           <li class="breadcrumb-item active">Add Students</li>
-                        </ul>
+                        <h3 class="page-title">Edit Student OEHM Online</h3>
+                        
                      </div>
                   </div>
                </div>
@@ -302,14 +299,20 @@
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
-                                       <label>Course_id</label>
+                                       <label>ID</label>
                                        <input type="text" class="form-control" id="course_id">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
-                                       <label>Course Name</label>
-                                       <input type="text" class="form-control" id="course_name">
+                                       <label>Student    Name</label>
+                                       <input type="text" class="form-control" id="student_name">
+                                    </div>
+                                 </div>
+                                 <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                       <label>Course Type</label>
+                                       <input type="text" class="form-control" value="OEHM Online" disabled>
                                     </div>
                                  </div>
                                  
@@ -327,19 +330,31 @@
                                  
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
-                                       <label>Faculty Name</label>
-                                       <input type="text" class="form-control" id="faculty_name">
+                                       <label>Course Enrolled</label>
+                                       <input type="text" class="form-control" id="course_enrolled">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
-                                       <label>Faculty Email</label>
-                                       <input type="text" class="form-control" id="faculty_email">
+                                       <label>Course Type</label>
+                                       <input type="text" class="form-control" id="course_type">
+                                    </div>
+                                 </div>
+                                 <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                       <label>Total Hours</label>
+                                       <input type="text" class="form-control" id="total_hours">
+                                    </div>
+                                 </div>
+                                 <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                       <label>Completion Status</label>
+                                       <input type="text" class="form-control" id="completion">
                                     </div>
                                  </div>
                                  
                                  <div class="col-12">
-                                    <button type="button" class="btn btn-primary" style="background-color: red;" onclick="addCourse()">Add Oehm Course</button>
+                                    <button type="button" class="btn btn-primary" style="background-color: red;" onclick="addCourse()">Edit Student </button>
                                  </div>
                               </div>
                            </form>
@@ -356,6 +371,35 @@
       <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
       <script src="assets/js/script.js"></script>
       <script>
+        
+
+
+        async function getCourseOetData() {
+    try {
+        var urlParams = new URLSearchParams(window.location.search);
+        var id = urlParams.get('id');
+        console.log("id is " + id);
+        var data = await axios({
+            url: "http://localhost:8000/getStudentOehmOnlineData",
+            method: "post",
+            data: { id: id }
+        });
+        var res = data.data.result;
+        var courses = data.data.courses; // Corrected variable name
+        console.log(data.data.courses);
+        document.getElementById('course_id').value = res[0].student_id;
+        document.getElementById('student_name').value = res[0].student_name;
+        document.getElementById('semester').value = res[0].semester;
+        document.getElementById('course_name').value = courses[0].course_name; // Corrected variable name
+        document.getElementById('total_hours').value = res[0].total_hours;
+        document.getElementById('course_type').value = courses[0].domain; // Corrected variable name
+        document.getElementById('completion').value = res[0].course_completed;
+    } catch (error) {
+        console.error("Error in fetching data:", error);
+    }
+}
+getCourseOetData();
+
          async function addCourse() {
     var course_name = document.getElementById('course_name').value;
     var course_id = document.getElementById('course_id').value;
@@ -370,13 +414,16 @@
     } else {
         try {
             var submitData = await axios({
-                url: "http://localhost:8000/addOetCourse",
+                url: "http://localhost:8000/editOehmCourse",
                 method: "post",
                 data: {course_name: course_name,course_id: course_id,semester: semester,faculty_name: faculty_name,faculty_email: faculty_email
     }
             });
             // Handle the response here
             console.log(submitData);
+            if(submitData.data.updated=='yes'){
+                alert("Record Updated");
+            }
         } catch (error) {
             // Handle errors here
             console.error('Error:', error);
@@ -384,6 +431,7 @@
         }
     }
 }
+
 
       </script>
    </body>

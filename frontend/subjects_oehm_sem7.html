@@ -316,7 +316,7 @@
                         <div class="col-auto text-right float-right ml-auto">
                             <a href="#" class="btn btn-outline-primary mr-2" onclick="downloadExcel()"><i class="fas fa-download"></i>
                                 Download</a>
-                            <a href="add-subject.html" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                            <a href="addSubjectOehm.html" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                         </div>
                     </div>
                 </div>
@@ -434,7 +434,7 @@
                                    <td>${list[i].faculty_email}</td>
                                    <td class="text-right">
                                       <div class="actions">
-                                         <a href="edit-subject.html" class="btn btn-sm bg-success-light mr-2">
+                                        <a href="editSubjectOehm.html?id=${list[i].course_id}" class="btn btn-sm bg-success-light mr-2">
                                          <i class="fas fa-pen"></i>
                                          </a>
                                          <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent('${list[i].course_id}')" data-toggle="modal" data-target="#exampleModal">
