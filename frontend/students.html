@@ -11,6 +11,9 @@
       <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
       <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
       <link rel="stylesheet" href="assets/plugins/datatables/datatables.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.js"
+        integrity="sha512-BK9PHgiHWfibD1gZHjigMVxh6wMAFhiGa8FV3mYdGIHO7QJWlP/Uy2kTw3ykOLd9OtSJyPSqPNKIRiSmAFw6UA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <link rel="stylesheet" href="assets/css/style.css">
       <link rel="icon" href="assets/img/logo-small.png" type="image/x-icon">
         <link rel="shortcut icon" href="assets/img/logo-small.png" type="image/x-icon">
@@ -297,6 +300,29 @@
                      </div>
                   </div>
                </div>
+               <div class="row" style="margin-bottom: 20px;">
+                  <div class="col col-12">Filters</div>
+                  <div class="col col-3">
+                     <label>Semester</label>
+                     <select id="semesterFilter">
+                        <option>--Select  Semester--</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                     </select>
+                  </div>
+                  <div class="col col-3">
+                     <label>Course Type</label>
+                     <select id="courseFilter">
+                        <option>--Select Course Type--</option>
+                        <option>OEHM</option>
+                        <option>OET</option>
+                     </select>
+                  </div>
+                  <div class="col col-3">
+                     <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
+                  </div>
+               </div>
                <div class="row">
                   <div class="col-sm-12">
                      <div class="card card-table">
@@ -307,77 +333,16 @@
                                     <tr>
                                        <th>ID</th>
                                        <th>Name</th>
-                                       <th>Class</th>
+                                       <th>Semester</th>
                                        <th>Course Type</th>
                                        <th>Courses Enrolled</th>
-                                       <th>Total Hours<br><span>OET</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span >OEHM</span></th>
-                                       <th>Completion Status<br><span>OET</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span >OEHM</span></th>
+                                       <th>Total Hours</th>
+                                       <th>Completion Status</th>
                                        <th class="text-right">Action</th>
                                     </tr>
                                  </thead>
-                                 <tbody>
-                                    <tr>
-                                       <td>16010421122</td>
-                                       <td>
-                                          <h2 class="table-avatar">
-                                             <a href="student-details.html">Parth Trivedi</a>
-                                          </h2>
-                                       </td>
-                                       
-                                       <td>TY IT B</td>
-                                       <td>Online</td>
-                                       <td>List of courses</td>
-                                       <td>32.5&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp30.2 </td>
-                                       <td>
-                                        <a href="edit-student.html" class="btn btn-sm bg-success-light mr-2">
-                                            Pending
-                                           </a>
-                                           <a href="edit-student.html" class="btn btn-sm btn-success mr-2">
-                                               Completed
-                                           </a> 
-                                    </td>
-                                       <td class="text-right">
-                                          <div class="actions">
-                                             <a href="edit-student.html" class="btn btn-sm bg-success-light mr-2">
-                                             <i class="fas fa-pen"></i>
-                                             </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
-                                       </td>
-                                    </tr>
-                                    <tr>
-                                        <td>16010421130</td>
-                                        <td>
-                                           <h2 class="table-avatar">
-                                              <a href="student-details.html">Hussain Harianawala</a>
-                                           </h2>
-                                        </td>
-                                        
-                                        <td>TY IT B</td>
-                                        <td>Offline</td>
-                                        <td>List of courses</td>
-                                        <td>32.5&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp31.5 </td>
-                                        <td>
-                                        <a href="edit-student.html" class="btn btn-sm btn-success mr-2">
-                                         Completed
-                                        </a>
-                                        <a href="edit-student.html" class="btn btn-sm bg-success-light mr-2">
-                                            Pending
-                                        </a>    
-                                        </td>
-                                        <td class="text-right">
-                                           <div class="actions">
-                                              <a href="edit-student.html" class="btn btn-sm bg-success-light mr-2">
-                                              <i class="fas fa-pen"></i>
-                                              </a>
-                                              <a href="#" class="btn btn-sm bg-danger-light">
-                                              <i class="fas fa-trash"></i>
-                                              </a>
-                                           </div>
-                                        </td>
-                                     </tr>
+                                 <tbody id="tbody">
+                                    
                                     
                                  </tbody>
                               </table>
@@ -423,6 +388,93 @@
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         }
+        async function getdata() {
+            var tbody = '';
+            var semester=document.getElementById('semesterFilter').value;
+            var type=document.getElementById('courseFilter').value;
+            var data;
+            if(semester==5 && type=='OEHM'){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem5OehmOnline",
+                method: "post",
+                
+            });
+            }else if(semester==5 && type=="OET"){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem5OetOnline",
+                method: "post",
+                
+            });
+            }else if(semester==6 && type=="OET"){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem6OetOnline",
+                method: "post",
+                
+            });
+            }else if(semester==6 && type=="OEHM"){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem6OehmOnline",
+                method: "post",
+                
+            });
+            }else if(semester==7 && type=="OET"){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem7OetOnline",
+                method: "post",
+                
+            });
+            }else if(semester==7 && type=="OEHM"){
+               data = await axios({
+                url: "http://localhost:8000/getStudentDataSem7OehmOnline",
+                method: "post",
+                
+            });
+            }
+            else{
+               alert("Please select atleast one option");
+            //    data = await axios({
+            //     url: "http://localhost:8000/getStudentDataSem7OetOnline",
+            //     method: "post",
+                
+            // });
+            }
+             
+            console.log(data.data.result);
+            console.log(data.data.course);
+            var list = data.data.result;
+            var course = data.data.course;
+            if(data){
+            for (let i = 0; i < list.length; i++) {
+                console.log(list[i].course_name);
+                tbody = tbody + `<tr>
+                                       <td>${list[i].student_id}</td>
+                                       <td>
+                                          <h2>
+                                             <a>${list[i].student_name}</a>
+                                          </h2>
+                                       </td>
+                                       <td>${list[i].semester}</td>
+                                       <td>${course[i].domain}</td>
+                                       <td>${course[i].course_name}</td>
+                                       <td>${list[i].total_hours}</td>
+                                       <td>${list[i].course_completed}</td>
+                                       <td class="text-right">
+                                          <div class="actions">
+                                             <a href="editStudentOnlineOehm.html?id=${list[i].student_id}" class="btn btn-sm bg-success-light mr-2" >
+                                             <i class="fas fa-pen"></i>
+                                             </a>
+                                             <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent(${list[i].student_id})" data-toggle="modal" data-target="#exampleModal">
+                                             <i class="fas fa-trash"></i>
+                                             </a>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                    `;
+            }
+            document.getElementById('tbody').innerHTML = tbody;
+        }
+        }
+        getdata();
         </script>
    </body>
    <!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->

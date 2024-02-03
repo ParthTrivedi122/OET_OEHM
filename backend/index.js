@@ -81,6 +81,26 @@ app.post("/getCourseDataSem6Oehm",async(req,res)=>{
 
 });
 
+app.post("/getCourseData",async(req,res)=>{
+   
+  con.query("SELECT * FROM courses_offline where "+req.fields.key+"= '"+req.fields.semester+"'", function (err, result, fields) {
+    if (err) throw err;
+    // console.log(result);
+    res.json({"result":result});
+  });
+
+});
+
+app.post("/getCourseDataAll",async(req,res)=>{
+   
+  con.query("SELECT * FROM courses_offline ", function (err, result, fields) {
+    if (err) throw err;
+    // console.log(result);
+    res.json({"result":result});
+  });
+
+});
+
 
 app.post("/getCourseDataSem6Oet",async(req,res)=>{
    
@@ -147,6 +167,133 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
   }
 });
 
+// app.post("/getStudentDataSemOehmOnline", async (req, res) => {
+//   var sem=req.fields.semesterFilter;
+//   var type=req.fields.courseFilter;
+//   if(sem==undefined || sem==""){
+//     if(type==undefined || type==""){
+//       try {
+//         const result = await new Promise((resolve, reject) => {
+//             con.query("SELECT * FROM students_online_oehm ", function (err, result, fields) {
+//                 if (err) throw err;
+//                 resolve(result);
+//             });
+//         });
+  
+//         const courseDetailsPromises = result.map(student => {
+//             return new Promise((resolve, reject) => {
+//                 con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+//                     if (err) throw err;
+//                     if (results && results.length > 0) {
+//                       resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+//                   } else {
+//                       resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
+//                   }
+//                 });
+//             });
+//         });
+  
+//         const courseDetails = await Promise.all(courseDetailsPromises);
+  
+//         res.json({ "result": result, "course": courseDetails });
+//     } catch (err) {
+//         console.error("Error retrieving data:", err);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+//   }else{
+//     try {
+//       const result = await new Promise((resolve, reject) => {
+//           con.query("SELECT * FROM students_online_oehm where course_type='"+type+"'", function (err, result, fields) {
+//               if (err) throw err;
+//               resolve(result);
+//           });
+//       });
+
+//       const courseDetailsPromises = result.map(student => {
+//           return new Promise((resolve, reject) => {
+//               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+//                   if (err) throw err;
+//                   if (results && results.length > 0) {
+//                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+//                 } else {
+//                     resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
+//                 }
+//               });
+//           });
+//       });
+
+//       const courseDetails = await Promise.all(courseDetailsPromises);
+
+//       res.json({ "result": result, "course": courseDetails });
+//   } catch (err) {
+//       console.error("Error retrieving data:", err);
+//       res.status(500).json({ error: "Internal server error" });
+//   }
+//     }
+//   }else{
+//     if(type==undefined || type==""){
+//       try {
+//         const result = await new Promise((resolve, reject) => {
+//             con.query("SELECT * FROM students_online_oehm where semester='"+sem+"'", function (err, result, fields) {
+//                 if (err) throw err;
+//                 resolve(result);
+//             });
+//         });
+  
+//         const courseDetailsPromises = result.map(student => {
+//             return new Promise((resolve, reject) => {
+//                 con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+//                     if (err) throw err;
+//                     if (results && results.length > 0) {
+//                       resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+//                   } else {
+//                       resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
+//                   }
+//                 });
+//             });
+//         });
+  
+//         const courseDetails = await Promise.all(courseDetailsPromises);
+  
+//         res.json({ "result": result, "course": courseDetails });
+//     } catch (err) {
+//         console.error("Error retrieving data:", err);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+//   }else{
+//     try {
+//       const result = await new Promise((resolve, reject) => {
+//           con.query("SELECT * FROM students_online_oehm where course_type='"+type+"' and semester='"+sem+"'", function (err, result, fields) {
+//               if (err) throw err;
+//               resolve(result);
+//           });
+//       });
+
+//       const courseDetailsPromises = result.map(student => {
+//           return new Promise((resolve, reject) => {
+//               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+//                   if (err) throw err;
+//                   if (results && results.length > 0) {
+//                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+//                 } else {
+//                     resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
+//                 }
+//               });
+//           });
+//       });
+
+//       const courseDetails = await Promise.all(courseDetailsPromises);
+
+//       res.json({ "result": result, "course": courseDetails });
+//   } catch (err) {
+//       console.error("Error retrieving data:", err);
+//       res.status(500).json({ error: "Internal server error" });
+//   }
+//   }
+// }
+  
+// });
+
 
 app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
   try {
@@ -174,6 +321,61 @@ app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
   }
 });
+
+app.post("/getStudentDataOnline", async (req, res) => {
+  try {
+      const result = await new Promise((resolve, reject) => {
+          con.query("SELECT * FROM students_online_oehm WHERE "+req.fields.key+" = '"+req.fields.semester+"'", function (err, result, fields) {
+              if (err) throw err;
+              resolve(result);
+          });
+      });
+
+      const courseDetailsPromises = result.map(student => {
+          return new Promise((resolve, reject) => {
+              con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+                  if (err) throw err;
+                  resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+              });
+          });
+      });
+
+      const courseDetails = await Promise.all(courseDetailsPromises);
+
+      res.json({ "result": result, "course": courseDetails });
+  } catch (err) {
+      console.error("Error retrieving data:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/getStudentDataOnlineall", async (req, res) => {
+  try {
+      const result = await new Promise((resolve, reject) => {
+          con.query("SELECT * FROM students_online ", function (err, result, fields) {
+              if (err) throw err;
+              resolve(result);
+          });
+      });
+
+      const courseDetailsPromises = result.map(student => {
+          return new Promise((resolve, reject) => {
+              con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+                  if (err) throw err;
+                  resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+              });
+          });
+      });
+
+      const courseDetails = await Promise.all(courseDetailsPromises);
+
+      res.json({ "result": result, "course": courseDetails });
+  } catch (err) {
+      console.error("Error retrieving data:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 app.post("/getCourseOehmData",async(req,res)=>{
   console.log(req.fields.id);
