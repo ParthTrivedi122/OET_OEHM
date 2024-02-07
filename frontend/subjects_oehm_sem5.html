@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
     <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.js"
         integrity="sha512-BK9PHgiHWfibD1gZHjigMVxh6wMAFhiGa8FV3mYdGIHO7QJWlP/Uy2kTw3ykOLd9OtSJyPSqPNKIRiSmAFw6UA=="
@@ -180,12 +181,12 @@
                             </ul>
                         </li>
                         <li class="">
-                            <a href="department.html"><i class="fas fa-building"></i> <span> Departments</span> <span
+                            <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span
                                     class="menu-arrow"></span></a>
 
                         </li>
                         <li class="active">
-                            <a href="subject_oehm_sem5.html"><i class="fas fa-code"></i> <span>Subjects</span> <span
+                            <a href="subjects_oehm_sem5.html"><i class="fas fa-code"></i> <span>Subjects</span> <span
                                     class="menu-arrow"></span></a>
                             
                         </li>
@@ -243,6 +244,14 @@
                           <option>OET</option>
                        </select>
                     </div>
+                    <div class="col col-2 ">
+                        <label>Branch</label>
+                        <select id="branchFilter">
+                            <option>--Select Branch--</option>
+                            <option>IT</option>
+                            <option>COMPS</option>
+                        </select>
+                    </div>
                     <div class="col col-3">
                        <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
                     </div>
@@ -258,6 +267,7 @@
                                                 <th>ID</th>
                                                 <th>Name</th>
                                                 <th>Semester</th>
+                                                <th>Course Type</th>
                                                 <th>Faculty</th>
                                                 <th>Faculty Email</th>
                                                 <th class="text-right">Action</th>
@@ -304,94 +314,135 @@
     <script src="assets/plugins/datatables/datatables.min.js"></script>
     <script src="assets/js/script.js"></script>
     <script>
-        function downloadExcel() {
-            // Get table HTML content
-        var table = document.getElementById('tbody');
-        var html = table.outerHTML;
+        // Function to generate and download Excel file
+function downloadExcel() {
+    // Create a new workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet 1');
 
-        // Create a Blob with the HTML content
-        var blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+    // Define table headers
+    const headers = [
+        'ID',
+        'Name',
+        'Semester',
+        'Course Type',
+        'Faculty',
+        'Faculty Email',
+        
+    ];
 
-        // Create a data URI for the Blob
-        var url = window.URL.createObjectURL(blob);
+    // Add headers to the worksheet
+    worksheet.addRow(headers);
 
-        // Create a link element and set its attributes
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.xls';
+    // Fetch table data
+    const tableRows = document.querySelectorAll('#data-table tbody tr');
 
-        // Append the link to the document and trigger a click event
-        document.body.appendChild(a);
-        a.click();
+    // Iterate over table rows and add data to the worksheet
+    tableRows.forEach(row => {
+        const rowData = [];
+        const cells = row.querySelectorAll('td');
+        cells.forEach(cell => {
+            rowData.push(cell.textContent.trim());
+        });
+        worksheet.addRow(rowData);
+    });
 
-        // Remove the link from the document and revoke the Blob URL
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        }
+    // Generate Excel file
+    workbook.xlsx.writeBuffer()
+        .then(buffer => {
+            // Convert buffer to Blob
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'table_data.xlsx';
+
+            // Append link to the body and trigger download
+            document.body.appendChild(a);
+            a.click();
+
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(error => {
+            console.error('Error generating Excel file:', error);
+        });
+}
+
         async function getdata() {
             var tbody = '';
             var semester=document.getElementById('semesterFilter').value;
             var type=document.getElementById('courseFilter').value;
+            var branch=document.getElementById('branchFilter').value;
+
             var data;
-            if(semester==5 && type=='OEHM'){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem5Oehm",
-                method: "post",
+            // if(semester==5 && type=='OEHM'){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem5Oehm",
+            //     method: "post",
                 
-            });
-            }else if(semester==5 && type=="OET"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem5Oet",
-                method: "post",
+            // });
+            // }else if(semester==5 && type=="OET"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem5Oet",
+            //     method: "post",
                 
-            });
-            }else if(semester==6 && type=="OET"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem6Oet",
-                method: "post",
+            // });
+            // }else if(semester==6 && type=="OET"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem6Oet",
+            //     method: "post",
                 
-            });
-            }else if(semester==6 && type=="OEHM"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem6Oehm",
-                method: "post",
+            // });
+            // }else if(semester==6 && type=="OEHM"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem6Oehm",
+            //     method: "post",
                 
-            });
-            }else if(semester==7 && type=="OET"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem7Oet",
-                method: "post",
+            // });
+            // }else if(semester==7 && type=="OET"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem7Oet",
+            //     method: "post",
                 
-            });
-            }else if(semester==7 && type=="OEHM"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataSem7Oehm",
-                method: "post",
+            // });
+            // }else if(semester==7 && type=="OEHM"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataSem7Oehm",
+            //     method: "post",
                 
-            });
-            }else if((semester==5 || semester==6 || semester==7) && type=="--Select Course Type--"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseData",
-                method: "post",
-                data:{semester:semester,key:"semester"}
+            // });
+            // }else if((semester==5 || semester==6 || semester==7) && type=="--Select Course Type--"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseData",
+            //     method: "post",
+            //     data:{semester:semester,key:"semester"}
                 
-            });
-            }else if((type=='OEHM' || type=='OET') && semester=="--Select Semester--"){
-               data = await axios({
-                url: "http://localhost:8000/getCourseData",
-                method: "post",
-                data:{semester:type,key:"course_type"}
+            // });
+            // }else if((type=='OEHM' || type=='OET') && semester=="--Select Semester--"){
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseData",
+            //     method: "post",
+            //     data:{semester:type,key:"course_type"}
                 
-            });
-            }
-            else{
-               //alert("Please select atleast one option");
-               data = await axios({
-                url: "http://localhost:8000/getCourseDataAll",
-                method: "post",
+            // });
+            // }
+            // else{
+            //    //alert("Please select atleast one option");
+            //    data = await axios({
+            //     url: "http://localhost:8000/getCourseDataAll",
+            //     method: "post",
                 
-            });
-            }
+            // });
+            // }
+            data = await axios({
+                url: "http://localhost:8000/getSubjectDataOffline",
+                method: "post",
+                data:{semester:semester,courseType:type,branch:branch}
+               });
             console.log(data.data.result);
             var list = data.data.result;
             if (data) {
@@ -400,16 +451,16 @@
                     tbody = tbody + `<tr>
                                        <td>${list[i].course_id}</td>
                                        <td>
-                                          <h2>
                                              <a>${list[i].course_name}</a>
-                                          </h2>
+                                          
                                        </td>
-                                       <td>${list[i].semester}</td>
+                                       <td id="semester">${list[i].semester}</td>
+                                       <td id="type">${list[i].course_type}</td>
                                        <td>${list[i].faculty_name}</td>
                                        <td>${list[i].faculty_email}</td>
                                        <td class="text-right">
                                           <div class="actions">
-                                             <a href="editSubjectOehm.html?id=${list[i].course_id}" class="btn btn-sm bg-success-light mr-2" >
+                                             <a href="editSubject.html?id=${list[i].course_id}&type=${list[i].course_type}" class="btn btn-sm bg-success-light mr-2" >
                                              <i class="fas fa-pen"></i>
                                              </a>
                                              <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent('${list[i].course_id}')" data-toggle="modal" data-target="#exampleModal">
@@ -427,12 +478,15 @@
 
         var deletestdID;
         async function deletePermission() {
-
+            var semester=document.getElementById('semester').innerHTML;
+            var type=document.getElementById('type').innerHTML;
+            console.log(semester);
+            console.log(type);
             console.log("id:" + deletestdID);
             var deleteStudent = await axios({
-                url: "http://localhost:8000/deleteSubjectDataSem5Oehm",
+                url: "http://localhost:8000/deleteSubjectData",
                 method: "post",
-                data: { id: deletestdID }
+                data: { id: deletestdID,semester:semester,type:type }
             });
             console.log(deleteStudent);
             console.log(deleteStudent.data.deleted);

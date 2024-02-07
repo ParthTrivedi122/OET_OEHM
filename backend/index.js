@@ -322,6 +322,35 @@ app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
   }
 });
 
+
+app.post("/getStudentOnlineData", async (req, res) => {
+  try {
+      const result = await new Promise((resolve, reject) => {
+          con.query("SELECT * FROM students_online WHERE student_id = '"+req.fields.id+"' and semester='"+req.fields.semester+"' and course_type='"+req.fields.type+"'", function (err, result, fields) {
+              if (err) throw err;
+              resolve(result);
+          });
+      });
+      console.log(result);
+      const courseDetailsPromises = result.map(student => {
+          return new Promise((resolve, reject) => {
+              con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
+                  if (err) throw err;
+                  resolve({ course_name: results[0].course_name, domain: results[0].Domain });
+              });
+          });
+      });
+
+      const courseDetails = await Promise.all(courseDetailsPromises);
+
+      res.json({ "result": result, "course": courseDetails });
+  } catch (err) {
+      console.error("Error retrieving data:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 app.post("/getStudentDataOnline", async (req, res) => {
   try {
       const result = await new Promise((resolve, reject) => {
@@ -349,10 +378,30 @@ app.post("/getStudentDataOnline", async (req, res) => {
   }
 });
 
+
+
+
+
 app.post("/getStudentDataOnlineall", async (req, res) => {
   try {
+      let query = "SELECT * FROM students_online WHERE 1=1"; // Initial query
+     
+      const { semester, courseType, branch } = req.fields; // Assuming the frontend sends the selected filters in the request body
+      console.log("semester is ",semester);
+      if (semester && semester !== "--Select Semester--") {
+          query += ` AND semester = '${semester}'`;
+      }
+
+      if (courseType && courseType !== "--Select Course Type--") {
+          query += ` AND course_type = '${courseType}'`;
+      }
+
+      if (branch && branch !== "--Select Branch--") {
+          query += ` AND branch = '${branch}'`;
+      }
+      console.log("Query is =",query);
       const result = await new Promise((resolve, reject) => {
-          con.query("SELECT * FROM students_online ", function (err, result, fields) {
+          con.query(query, function (err, result, fields) {
               if (err) throw err;
               resolve(result);
           });
@@ -375,6 +424,48 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+app.post("/getSubjectDataOffline", async (req, res) => {
+  try {
+      let query = "SELECT * FROM courses_offline WHERE 1=1"; // Initial query
+     
+      const { semester, courseType, branch } = req.fields; // Assuming the frontend sends the selected filters in the request body
+      console.log("semester is ",semester);
+      if (semester && semester !== "--Select Semester--") {
+          query += ` AND semester = '${semester}'`;
+      }
+
+      if (courseType && courseType !== "--Select Course Type--") {
+          query += ` AND course_type = '${courseType}'`;
+      }
+
+      if (branch && branch !== "--Select Branch--") {
+          query += ` AND branch = '${branch}'`;
+      }
+      console.log("Query is =",query);
+      const result = await new Promise((resolve, reject) => {
+          con.query(query, function (err, result, fields) {
+              if (err) throw err;
+              resolve(result);
+          });
+      });
+
+     
+      res.json({ "result": result });
+  } catch (err) {
+      console.error("Error retrieving data:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+
+
+
+
 
 
 app.post("/getCourseOehmData",async(req,res)=>{
@@ -416,7 +507,7 @@ app.post("/getCourseOetData",async(req,res)=>{
 });
 
 app.post("/editOehmCourse",async(req,res)=>{
-  con.query("UPDATE courses_offline_oehm SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"'", function (err, result, fields) {
+  con.query("UPDATE courses_offline SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"' and course_type='OEHM'", function (err, result, fields) {
     if (err) throw err;
     console.log("result is" + result);
     res.json({"updated": "yes"});
@@ -424,8 +515,30 @@ app.post("/editOehmCourse",async(req,res)=>{
 
 });
 
+
+
+app.post("/editOnlineStudent", async (req, res) => {
+  const { student_id, course_type, semester, course_id, course_name,student_name,total_hours,completion } = req.fields;
+  
+  con.query("UPDATE students_online SET course_id = ?,student_name=?  ,total_hours=?  , semester = ?,course_completed=? WHERE student_id = ? AND course_type = ? AND semester = ?", 
+  [course_id,student_name,total_hours , semester, student_id, course_type, semester,completion], 
+  function (err, result, fields) {  
+      if (err) {
+          console.error("Error updating student online data:", err);
+          res.status(500).json({ error: "An error occurred while updating student online data" });
+          return;
+      }
+      console.log("Updated student online data:", result);
+      res.json({ "updated": "yes" });
+  });
+});
+
+
+
+
+
 app.post("/editOetCourse",async(req,res)=>{
-  con.query("UPDATE courses_offline_oet SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"'", function (err, result, fields) {
+  con.query("UPDATE courses_offline SET course_id = '" + req.fields.course_id + "', course_name = '" + req.fields.course_name + "', faculty_name = '" + req.fields.faculty_name + "', semester = '" + req.fields.semester + "', faculty_email = '" + req.fields.faculty_email + "' WHERE course_id='"+req.fields.course_id+"' and course_type='OET'", function (err, result, fields) {
     if (err) throw err;
     console.log("result is" + result);
     res.json({"updated": "yes"});
@@ -561,6 +674,16 @@ app.post("/getStudentDataSem7OehmOnline", async (req, res) => {
   }
 });
 
+app.post("/deleteStudentDataOnline",async(req,res)=>{
+  // console.log(req.fields.id);
+ con.query("delete FROM students_online WHERE student_id='"+req.fields.id+"' and semester='"+req.fields.semester+"'", function (err, result, fields) {
+   if (err) throw err;
+   // console.log("result is"+result);
+   res.json({"deleted":"yes"});
+ });
+
+});
+
 app.post("/deleteStudentDataSem5OehmOnline",async(req,res)=>{
    // console.log(req.fields.id);
   con.query("delete FROM students_online_oehm WHERE student_id="+req.fields.id+"", function (err, result, fields) {
@@ -582,9 +705,9 @@ app.post("/deleteStudentDataSem5OetOnline",async(req,res)=>{
 });
 
 
-app.post("/deleteSubjectDataSem5Oehm",async(req,res)=>{
+app.post("/deleteSubjectData",async(req,res)=>{
    // console.log("subject_id"+req.fields.id);
-  con.query("delete FROM courses_offline_oehm WHERE course_id='"+req.fields.id+"'", function (err, result, fields) {
+  con.query("delete FROM courses_offline WHERE course_id='"+req.fields.id+"' and semester='"+req.fields.semester+"' and course_type='"+req.fields.type+"'", function (err, result, fields) {
     if (err) throw err;
     // console.log(result);
     res.json({"deleted":"yes"});
