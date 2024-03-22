@@ -22,7 +22,7 @@ app.use(cors({
 
 app.use(formidable());
 var con = mysql.createConnection({
-    host: "13.234.60.137",
+    host: "35.200.243.194",
     user: "admin_kjsce",
     password: "uP58a70f#",
     database: "oet-oehm"
