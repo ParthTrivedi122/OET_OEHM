@@ -281,7 +281,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    
+
                                     <th>Semester</th>
                                     <th>Department</th>
                                     <th>Domain</th>
@@ -340,10 +340,9 @@
             var hours = 0;
             if (data) {
                for (let i = 0; i < list.length; i++) {
-
                   console.log(list[i].courses_enrolled);
                   if (list[i].course_approved == 0) {
-                        tbody = tbody + `<tr>
+                     tbody = tbody + `<tr>
                                        <td>${list[i].student_id}</td>
                                        <td>
                                          
@@ -358,19 +357,18 @@
                                        <td>${list[i].courses_enrolled}</td>
                                           <td>${list[i].courses_links}</td>
                                        <td>${list[i].total_hours}</td>
-                                       <td>${list[i].final_hours}</td>
-                                      
+                                       <td>${list[i].final_hours}</td>                                   
                                        <td>
-                                    <a href="#" class="accept" onclick="approve(1,${list[i].id},${list[i].email})">ACCEPT <span class="fa fa-check"></span></a>
-                                </td>
+                                          <a href="#" class="accept" onclick="approve(1,${list[i].id},${list[i].email})">ACCEPT <span class="fa fa-check"></span></a>
+                                       </td>
                                     </tr>
                                     `;
-                     
+
                   }
                }
                document.getElementById('tbody').innerHTML = tbody;
             }
-            
+
          } catch (e) {
             console.log("error is:", e);
          }
@@ -378,21 +376,21 @@
 
       getdata();
 
-      async function approve(approve, id,email) {
-         console.log(approve, id,email);
+      async function approve(approve, id, email) {
+         console.log(approve, id, email);
          try {
             var response = await axios({
                url: "http://localhost:8000/approveStudentDataOnline",
                method: "post",
-               data: { approve: approve, id: id,email:email }
+               data: { approve: approve, id: id, email: email }
             });
             console.log(response.data.data);
             var list = response.data.data;
             tbody = '';  // Clear tbody before appending new rows
             for (let i = 0; i < list.length; i++) {
                console.log(list[i].course_name);
-               if(list[i].course_approved==0){
-               tbody += `<tr>
+               if (list[i].course_approved == 0) {
+                  tbody += `<tr>
                             <td>${list[i].student_id}</td>
                             <td>${list[i].email}</td>
                             <td>${list[i].student_name}</td>
@@ -407,8 +405,8 @@
                                 <a href="#" class="accept" onclick="approve(1,${list[i].id},${list[i].email})">ACCEPT <span class="fa fa-check"></span></a>
                             </td>
                          </tr>`;
+               }
             }
-         }
 
             if (list.length == 0) {
                tbody = "No Request";

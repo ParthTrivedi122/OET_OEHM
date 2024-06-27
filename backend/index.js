@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express= require('express');
 const app= express();
 const cors = require('cors');
-const mysql = require('mysql');
+//const mysql = require('mysql');
 const formidable = require('express-formidable');
+const mysql = require('mysql2/promise');
 // const session = require("express-session");
 // const Login=require("./schema/registeredSchema");
 // const Customer=require("./schema/customerSchema");
@@ -28,22 +30,20 @@ app.use(formidable());
 //     database: "oet-oehm"
 //   });
 
-var con = mysql.createConnection({
-    host: "localhost",  
-    user: "root",
-    password: "",
-    database: "oet-oehm-student"
-  });
+// var con = mysql.createConnection({
+//     host: "localhost",  
+//     user: "root",
+//     password: "",
+//     database: "oet-oehm-student"
+//   });
 
-// const dbConfig = {
-//   host: process.env.DB_HOST,
-//   port: process.env.DB_PORT,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASS,
-//   database: process.env.DB_NAME,
-// };
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+} );
 
-// const con = mysql.createPool({ ...dbConfig });
 
 
 app.post("/getdata",async(req,res)=>{
@@ -619,6 +619,94 @@ app.post("/getStudentDataOnline", async (req, res) => {
 //   }
 // });
 
+// app.post("/getStudentDataOnlineall", async (req, res) => {
+//   try {
+//     let query = `
+//       SELECT 
+//         u.roll_number AS student_id,
+//         u.name AS student_name,
+//         u.semester,
+//         e.course_id,
+//         e.type,
+//         e.course_approved,
+//         c.course_name,
+//         c.domain,
+//         e.total_hours,
+//         u.branch,
+//         u.email,
+//         e.id,
+//         e.course_completed
+//       FROM users u
+//       JOIN enrollments e ON u.email = e.email
+//       JOIN courses_online c ON e.course_id = c.course_id
+//       WHERE 1=1
+//     `;
+
+//     const { semester, branch, courseType } = req.fields;
+//     if (semester && semester !== "--Select Semester--") {
+//       query += ` AND u.semester = '${semester}'`;
+//     }
+
+//     if (courseType && courseType !== "--Select Course Type--") {
+//       query += ` AND e.type = '${courseType}'`;
+//     }
+
+//     if (branch && branch !== "--Select Branch--") {
+//       query += ` AND u.branch = '${branch}'`;
+//     }
+
+//     query += " GROUP BY u.roll_number, e.course_id";
+
+//     console.log("Query is =", query);
+//     const result = await new Promise((resolve, reject) => {
+//       con.query(query, function (err, result, fields) {
+//         if (err) reject(err);
+//         resolve(result);
+//       });
+//     });
+
+//     const studentData = {};
+
+//     result.forEach(student => {
+//       if (!studentData[student.student_id]) {
+//         studentData[student.student_id] = {
+//           id: student.id,
+//           student_id: student.student_id,
+//           student_name: student.student_name,
+//           semester: student.semester,
+//           email: student.email,
+//           course_approved: student.course_approved,
+//           courses_type: student.type,
+//           courses_enrolled: "",
+//           courses_links: "",
+//           domain: "",
+//           total_hours: "",
+//           final_hours:0,
+//           branch: student.branch,
+//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+//           completion_colour: student.course_completed === 1 ? "success" : "danger"
+//         };
+//       }
+      
+//       studentData[student.student_id].courses_enrolled += (student.course_name || "N/A") + "<br>";
+//       studentData[student.student_id].courses_links += `<a href="">`+(student.links || "No links found") + "</a><br>";
+//       studentData[student.student_id].domain += (student.domain || "N/A") + "<br>";
+//       studentData[student.student_id].total_hours += (student.total_hours || "N/A") + "<br>";
+//       studentData[student.student_id].final_hours += (parseInt(student.total_hours) || 0) ;
+
+
+//     });
+
+//     const formattedData = Object.values(studentData);
+
+//     console.log("Formatted Data:", formattedData);
+//     res.json({ result: formattedData });
+//   } catch (err) {
+//     console.error("Error retrieving data:", err);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 app.post("/getStudentDataOnlineall", async (req, res) => {
   try {
     let query = `
@@ -658,12 +746,8 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
     query += " GROUP BY u.roll_number, e.course_id";
 
     console.log("Query is =", query);
-    const result = await new Promise((resolve, reject) => {
-      con.query(query, function (err, result, fields) {
-        if (err) reject(err);
-        resolve(result);
-      });
-    });
+
+    const [result] = await pool.query(query); // Use promise-based query
 
     const studentData = {};
 
@@ -681,20 +765,17 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
           courses_links: "",
           domain: "",
           total_hours: "",
-          final_hours:0,
           branch: student.branch,
           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
           completion_colour: student.course_completed === 1 ? "success" : "danger"
         };
       }
       
+      // Concatenate strings with <br> tags
       studentData[student.student_id].courses_enrolled += (student.course_name || "N/A") + "<br>";
-      studentData[student.student_id].courses_links += `<a href="">`+(student.links || "No links found") + "</a><br>";
+      studentData[student.student_id].courses_links += (student.links || "No links found") + "<br>";
       studentData[student.student_id].domain += (student.domain || "N/A") + "<br>";
       studentData[student.student_id].total_hours += (student.total_hours || "N/A") + "<br>";
-      studentData[student.student_id].final_hours += (parseInt(student.total_hours) || 0) ;
-
-
     });
 
     const formattedData = Object.values(studentData);
@@ -706,8 +787,6 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
 
 
 app.post("/approveStudentDataOnline",async (req,res)=>{
