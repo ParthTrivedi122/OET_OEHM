@@ -35,6 +35,16 @@ var con = mysql.createConnection({
     database: "oet-oehm-student"
   });
 
+// const dbConfig = {
+//   host: process.env.DB_HOST,
+//   port: process.env.DB_PORT,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASS,
+//   database: process.env.DB_NAME,
+// };
+
+// const con = mysql.createPool({ ...dbConfig });
+
 
 app.post("/getdata",async(req,res)=>{
    
@@ -425,83 +435,184 @@ app.post("/getStudentDataOnline", async (req, res) => {
 //   }
 // });
 
+
 // app.post("/getStudentDataOnlineall", async (req, res) => {
 //   try {
-//       let query = "SELECT * FROM students_online WHERE 1=1"; // Initial query
-     
-//       const { semester, courseType, branch } = req.fields; // Assuming the frontend sends the selected filters in the request body
-//       console.log("semester is ",semester);
+//       let query = `
+//           SELECT 
+//               u.roll_number AS student_id,
+//               u.name AS student_name,
+//               u.semester,
+//               e.course_id,
+//               e.type,
+//               e.course_approved,
+//               c.course_name,
+//               c.domain,
+//               e.total_hours,
+//               u.branch,
+//               u.email,
+//               e.id,
+//               e.course_completed
+//           FROM users u
+//           JOIN enrollments e ON u.email = e.email
+//           JOIN courses_online c ON e.course_id = c.course_id
+//           WHERE 1=1
+//       `;
+
+//       const { semester, branch, courseType } = req.fields;  // Removed courseType as it's not present in enrollments table
 //       if (semester && semester !== "--Select Semester--") {
-//           query += ` AND semester = '${semester}'`;
+//           query += ` AND u.semester = '${semester}'`;
 //       }
 
 //       if (courseType && courseType !== "--Select Course Type--") {
-//           query += ` AND course_type = '${courseType}'`;
+//           query += ` AND e.type = '${courseType}'`;
 //       }
 
 //       if (branch && branch !== "--Select Branch--") {
-//           query += ` AND branch = '${branch}'`;
+//           query += ` AND u.branch = '${branch}'`;
 //       }
-//       console.log("Query is =",query);
+
+//       query += " GROUP BY u.roll_number, e.course_id"; // Group by student and course
+
+//       console.log("Query is =", query);
 //       const result = await new Promise((resolve, reject) => {
 //           con.query(query, async function (err, result, fields) {
-//               if (err) throw err;
-//               // Resolve with modified result, updating the course_id to be an array
-//               resolve(result.map(student => {
-//                   return {
-//                       ...student,
-//                       course_id: JSON.parse(student.course_id)
-//                   };
-//               }));
+//               if (err) reject(err);
+//               resolve(result);
 //           });
 //       });
 
-//       const courseDetailsPromises = result.map(student => {
+//       const getCertificates = (email,course_id) => {
 //           return new Promise((resolve, reject) => {
-//               // Assuming student.course_id is now an array
-//               const course_id = student.course_id;
-//               const query = "SELECT course_name, Domain FROM courses_online WHERE course_id IN (?)"; // Assuming course_id is an array
-//               con.query(query, [course_id], function (err, results, fields) {
-//                   if (err) throw err;
-//                   resolve(results.map(result => ({ course_name: result.course_name, domain: result.Domain })));
-//               });
+//               con.query(
+//                   "SELECT submission_link FROM submissions WHERE email = ? and course_id= ? GROUP BY submission_link",
+//                   [email,course_id],
+//                   function (err, results) {
+//                       if (err) return reject(err);
+//                       const certificates = results.map(row => `<a href="${row.submission_link}">${row.submission_link}</a><br>`);
+//                       resolve(certificates);
+//                   }
+//               );
 //           });
-//       });
+//       };
 
-//       const courseDetails = await Promise.all(courseDetailsPromises);
+//       for (let student of result) {
+//           student.certificates = await getCertificates(student.email);
+//       }
 
 //       // Formatting data with <br> tag
-//       const formattedCourseName = courseDetails.map(course => {
-//           if (course.length === 0) {
-//               return "No course details found"; // or any other appropriate message
-//           }
-//           return course.map(courseInfo => `${courseInfo.course_name}`).join('<br>');
-//       });
-//       const formattedCourseDomain = courseDetails.map(course => {
-//         if (course.length === 0) {
-//             return "No course details found"; // or any other appropriate message
-//         }
-//         return course.map(courseInfo => `${courseInfo.domain}`).join('<br>');
-//     });
-//     // Append <br> to each link
-// // Append <br> to each link
-// const formattedLinks = result.map(student => {
-//   if (Array.isArray(student.links) && student.links.length > 0) {
-//     return student.links.map(link => `<a href="${link}" target="_blank">${link}</a><br>`).join('');
-//   } else if (typeof student.links === 'string') {
-//     // If student.links is a string with links separated by commas
-//     const linksArray = student.links.split(',').map(link => link.trim());
-//     return linksArray.map(link => `<a href="${link}" target="_blank">${link}</a><br>`).join('');
-//   } else {
-//     return "No links found";
+//       const formattedData = result.map(student => ({
+//           id: student.id,
+//           student_id: student.student_id,
+//           student_name: student.student_name,
+//           semester: student.semester,
+//           email: student.email,
+//           course_approved: student.course_approved,
+//           courses_type: student.type,
+//           certificates: student.certificates.join(''),
+//           courses_enrolled: student.course_name || "N/A",
+//           courses_links: student.links || "No links found",
+//           domain: student.domain || "N/A",
+//           total_hours: student.total_hours || "N/A",
+//           branch: student.branch || "N/A",
+//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+//           completion_colour: student.course_completed === 1 ? "success" : "danger"
+//       }));
+
+//       console.log("Certificates:", formattedData.map(student => student.certificates));
+//       res.json({ "result": formattedData });
+//   } catch (err) {
+//       console.error("Error retrieving data:", err);
+//       res.status(500).json({ error: "Internal server error" });
 //   }
 // });
 
 
+// app.post("/getStudentDataOnlineall", async (req, res) => {
+//   try {
+//       let query = `
+//           SELECT 
+//               u.roll_number AS student_id,
+//               u.name AS student_name,
+//               u.semester,
+//               e.course_id,
+//               e.type,
+//               e.course_approved,
+//               c.course_name,
+//               c.domain,
+//               e.total_hours,
+//               u.branch,
+//               u.email,
+//               e.id,
+//               e.course_completed
+//           FROM users u
+//           JOIN enrollments e ON u.email = e.email
+//           JOIN courses_online c ON e.course_id = c.course_id
+//           WHERE 1=1
+//       `;
 
-    
-//       //console.log(formattedCourseDetails);
-//       res.json({ "result": result, "course": {"course_name":formattedCourseName,"domain":formattedCourseDomain},"certificates":formattedLinks});
+//       const { semester, branch, courseType } = req.fields;  // Make sure you're using `req.body` to get the request data
+//       if (semester && semester !== "--Select Semester--") {
+//           query += ` AND u.semester = '${semester}'`;
+//       }
+
+//       if (courseType && courseType !== "--Select Course Type--") {
+//           query += ` AND e.type = '${courseType}'`;
+//       }
+
+//       if (branch && branch !== "--Select Branch--") {
+//           query += ` AND u.branch = '${branch}'`;
+//       }
+
+//       query += " GROUP BY u.roll_number, e.course_id"; // Group by student and course
+
+//       console.log("Query is =", query);
+//       const result = await new Promise((resolve, reject) => {
+//           con.query(query, function (err, result, fields) {
+//               if (err) reject(err);
+//               resolve(result);
+//           });
+//       });
+
+//       // const getCertificates = (email, course_id) => {
+//       //     return new Promise((resolve, reject) => {
+//       //         con.query(
+//       //             "SELECT submission_link FROM submissions WHERE email = ? AND course_id = -? GROUP BY submission_link",
+//       //             [email, course_id],
+//       //             function (err, results) {
+//       //                 if (err) return reject(err);
+//       //                 const certificates = results.map(row => `<a href="${row.submission_link}">${row.submission_link}</a><br>`);
+//       //                 resolve(certificates);
+//       //             }
+//       //         );
+//       //     });
+//       // };
+
+//       // for (let student of result) {
+//       //     student.certificates = await getCertificates(student.email, student.course_id);
+//       // }
+
+//       // // Formatting data with <br> tag
+//       const formattedData = result.map(student => ({
+//           id: student.id,
+//           student_id: student.student_id,
+//           student_name: student.student_name,
+//           semester: student.semester,
+//           email: student.email,
+//           course_approved: student.course_approved,
+//           courses_type: student.type,
+//           // certificates: student.certificates.join(''),
+//           courses_enrolled: student.course_name || "N/A",
+//           courses_links: student.links || "No links found",
+//           domain: student.domain || "N/A",
+//           total_hours: student.total_hours || "N/A",
+//           branch: student.branch || "N/A",
+//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+//           completion_colour: student.course_completed === 1 ? "success" : "danger"
+//       }));
+
+//       console.log("Certificates:", formattedData);
+//       res.json({ "result": formattedData });
 //   } catch (err) {
 //       console.error("Error retrieving data:", err);
 //       res.status(500).json({ error: "Internal server error" });
@@ -510,81 +621,99 @@ app.post("/getStudentDataOnline", async (req, res) => {
 
 app.post("/getStudentDataOnlineall", async (req, res) => {
   try {
-      let query = `
-          SELECT 
-              u.roll_number AS student_id,
-              u.name AS student_name,
-              u.semester,
-              e.course_id,
-              e.type,
-              e.course_approved,
-              c.course_name,
-              c.domain,
-              s.submission_link ,
-              e.total_hours,
-              u.branch,
-              u.email,
-              e.id,
-              e.course_completed
-          FROM users u
-          JOIN enrollments e ON u.email = e.email
-          JOIN courses_online c ON e.course_id = c.course_id
-          LEFT JOIN submissions s ON u.email = s.email AND e.course_id = s.course_id
-          WHERE 1=1
-      `;
+    let query = `
+      SELECT 
+        u.roll_number AS student_id,
+        u.name AS student_name,
+        u.semester,
+        e.course_id,
+        e.type,
+        e.course_approved,
+        c.course_name,
+        c.domain,
+        e.total_hours,
+        u.branch,
+        u.email,
+        e.id,
+        e.course_completed
+      FROM users u
+      JOIN enrollments e ON u.email = e.email
+      JOIN courses_online c ON e.course_id = c.course_id
+      WHERE 1=1
+    `;
 
-      const { semester, branch,courseType } = req.fields;  // Removed courseType as it's not present in enrollments table
-      if (semester && semester !== "--Select Semester--") {
-          query += ` AND u.semester = '${semester}'`;
-      }
-
-      if (courseType && courseType !== "--Select Course Type--") {
-        query += ` AND e.type = '${courseType}'`;
+    const { semester, branch, courseType } = req.fields;
+    if (semester && semester !== "--Select Semester--") {
+      query += ` AND u.semester = '${semester}'`;
     }
 
-      if (branch && branch !== "--Select Branch--") {
-          query += ` AND u.branch = '${branch}'`;
-      }
+    if (courseType && courseType !== "--Select Course Type--") {
+      query += ` AND e.type = '${courseType}'`;
+    }
 
-      query += " GROUP BY u.roll_number, e.course_id"; // Group by student and course
+    if (branch && branch !== "--Select Branch--") {
+      query += ` AND u.branch = '${branch}'`;
+    }
 
-      console.log("Query is =", query);
-      const result = await new Promise((resolve, reject) => {
-          con.query(query, async function (err, result, fields) {
-              if (err) throw err;
-              resolve(result);
-          });
+    query += " GROUP BY u.roll_number, e.course_id";
+
+    console.log("Query is =", query);
+    const result = await new Promise((resolve, reject) => {
+      con.query(query, function (err, result, fields) {
+        if (err) reject(err);
+        resolve(result);
       });
-      // Formatting data with <br> tag
-      const formattedData = result.map(student => ({
+    });
+
+    const studentData = {};
+
+    result.forEach(student => {
+      if (!studentData[student.student_id]) {
+        studentData[student.student_id] = {
           id: student.id,
           student_id: student.student_id,
           student_name: student.student_name,
           semester: student.semester,
-          email:student.email,
-          course_approved:student.course_approved,
-          courses_type:student.type,
-          certificates:student.submission_link,
-          courses_enrolled: student.course_name || "N/A",
-          courses_links: student.links || "No links found",
-          domain: student.domain || "N/A",
-          total_hours: student.total_hours || "N/A",
-          branch: student.branch || "N/A",
-          completion_status: student.course_completed===1 ? "Completed":"Not Completed",
-          completion_colour: student.course_completed===1 ? "success":"danger"
-      }));
-      //console.log(formattedData);
-      res.json({ "result": formattedData });
+          email: student.email,
+          course_approved: student.course_approved,
+          courses_type: student.type,
+          courses_enrolled: "",
+          courses_links: "",
+          domain: "",
+          total_hours: "",
+          final_hours:0,
+          branch: student.branch,
+          completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+          completion_colour: student.course_completed === 1 ? "success" : "danger"
+        };
+      }
+      
+      studentData[student.student_id].courses_enrolled += (student.course_name || "N/A") + "<br>";
+      studentData[student.student_id].courses_links += `<a href="">`+(student.links || "No links found") + "</a><br>";
+      studentData[student.student_id].domain += (student.domain || "N/A") + "<br>";
+      studentData[student.student_id].total_hours += (student.total_hours || "N/A") + "<br>";
+      studentData[student.student_id].final_hours += (parseInt(student.total_hours) || 0) ;
+
+
+    });
+
+    const formattedData = Object.values(studentData);
+
+    console.log("Formatted Data:", formattedData);
+    res.json({ result: formattedData });
   } catch (err) {
-      console.error("Error retrieving data:", err);
-      res.status(500).json({ error: "Internal server error" });
+    console.error("Error retrieving data:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 
+
+
 app.post("/approveStudentDataOnline",async (req,res)=>{
+  console.log(req.fields.email);
   try {
-    query="UPDATE enrollments SET course_approved = 1 WHERE id ="+req.fields.id;
+    query="UPDATE enrollments SET course_approved = 1 WHERE email="+req.fields.email;
     con.query(query, async function (err, result, fields) {
       if (err) throw err;
       let querys = `
@@ -612,22 +741,39 @@ app.post("/approveStudentDataOnline",async (req,res)=>{
       con.query(querys, async function (err, result, fields) {
         if (err) throw err;
         console.log(result)
-        const formattedData = result.map(student => ({
-          id: student.id,
-          student_id: student.student_id,
-          student_name: student.student_name,
-          semester: student.semester,
-          email:student.email,
-          courses_type:student.type,
-          certificates:student.submission_link,
-          courses_enrolled: student.course_name || "N/A",
-          courses_links: student.links || "No links found",
-          domain: student.domain || "N/A",
-          total_hours: student.total_hours || "N/A",
-          branch: student.branch || "N/A",
-          completion_status: student.course_completed===1 ? "Completed":"Not Completed",
-          completion_colour: student.course_completed===1 ? "success":"danger"
-      }));
+        const studentData = {};
+        result.forEach(student => {
+          if (!studentData[student.student_id]) {
+            studentData[student.student_id] = {
+              id: student.id,
+              student_id: student.student_id,
+              student_name: student.student_name,
+              semester: student.semester,
+              email: student.email,
+              course_approved: student.course_approved,
+              courses_type: student.type,
+              courses_enrolled: "",
+              courses_links: "",
+              domain: "",
+              total_hours: "",
+              final_hours:0,
+              branch: student.branch,
+              completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+              completion_colour: student.course_completed === 1 ? "success" : "danger"
+            };
+          }
+          
+          studentData[student.student_id].courses_enrolled += (student.course_name || "N/A") + "<br>";
+          studentData[student.student_id].courses_links += `<a href="">`+(student.links || "No links found") + "</a><br>";
+          studentData[student.student_id].domain += (student.domain || "N/A") + "<br>";
+          studentData[student.student_id].total_hours += (student.total_hours || "N/A") + "<br>";
+          studentData[student.student_id].final_hours += (parseInt(student.total_hours) || 0) ;
+    
+    
+        });
+    
+        const formattedData = Object.values(studentData);
+    
         res.json({"msg":"Susscess",data:formattedData})}
       )
   });

@@ -65,7 +65,8 @@
                                  </span>
                                  <div class="media-body">
                                     <p class="noti-details"><span class="noti-title">Carlson Tech</span> has approved
-                                       <span class="noti-title">your estimate</span></p>
+                                       <span class="noti-title">your estimate</span>
+                                    </p>
                                     <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
                                  </div>
                               </div>
@@ -248,13 +249,15 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Semester</th>
+                                    <th>Branch</th>
+
                                     <th>Domain</th>
                                     <th>Course Type</th>
                                     <th>Courses Enrolled</th>
                                     <th>Certificates Links</th>
-                                    
+
+                                    <th> Hours</th>
                                     <th>Total Hours</th>
-                                    <th>Branch</th>
                                     <th>Completion Status</th>
                                     <th class="text-right">Action</th>
                                  </tr>
@@ -277,21 +280,21 @@
 
    <div class="modals fade" id="exampleModals" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            ...
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
-        </div>
+         <div class="modal-content">
+            <div class="modal-header">
+               <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
       </div>
-    </div>
+   </div>
 
 
 
@@ -336,12 +339,14 @@
             'ID',
             'Name',
             'Semester',
+            'Branch',
             'Domain',
             'Course Type',
             'Courses Enrolled',
             'Courses Type',
-            'Total Hours',
-            'Branch',
+            'Hours',
+            'Final Hours',
+            
             'Completion Status'
          ];
 
@@ -411,16 +416,33 @@
                data: { semester: semester, courseType: type, branch: branch }
             });
             console.log(data.data.result);
-            console.log(data.data.result[0].domain);
+            // console.log(data.data.result[0].domain);
             console.log(data.data.certificates);
             var list = data.data.result;
             var course = data.data.course;
-            var certificates=data.data.certificates;
+            // list.forEach(student => {
+            //    // Concatenate domains
+            //    domain += student.domain.join(", ") + "<br>";
+
+            //    // Concatenate enrolled courses
+            //    enrolled += student.courses_enrolled.join("<br>") + "<br>";
+
+            //    // Concatenate total hours
+            //    hours += student.total_hours.join("<br>") + "<br>";
+
+            //    // Concatenate certificates
+            //    certificates += student.courses_links.join("<br>") + "<br>";
+            // });
+
+            // console.log("Domains:", domain);
+            // console.log("Enrolled Courses:", enrolled);
+            // console.log("Total Hours:", hours);
+            // console.log("Certificates:", certificates);
             if (data) {
                for (let i = 0; i < list.length; i++) {
                   console.log(list[i].course_name);
-                  if(list[i].course_approved==1){
-                  tbody = tbody + `<tr>
+                  if (list[i].course_approved == 1) {
+                     tbody = tbody + `<tr>
                                        <td>${list[i].student_id}</td>
                                        <td>
                                          
@@ -428,12 +450,14 @@
                                           
                                        </td>
                                        <td id="sem">${list[i].semester}</td>
+                                                                              <td>${list[i].branch}</td>
+
                                        <td>${list[i].domain}</td>
                                        <td id="types">${list[i].courses_type}</td>
                                        <td>${list[i].courses_enrolled}</td>
-                                          <td></td>
+                                          <td>${list[i].courses_links}</td>
                                        <td>${list[i].total_hours}</td>
-                                       <td>${list[i].branch}</td>
+                                       <td>${list[i].final_hours}</td>
                                        <td><div class="btn btn-${list[i].completion_colour}">${list[i].completion_status}</div></td>
                                        <td class="text-right">
                                           <div class="actions">
@@ -449,8 +473,8 @@
                                        </td>
                                     </tr>
                                     `;
+                  }
                }
-            }
                document.getElementById('tbody').innerHTML = tbody;
             }
          } catch (e) {
@@ -459,7 +483,7 @@
       }
 
 
-     
+
       var deletestdID;
       async function deletePermission() {
          console.log("delete : " + deletestdID);
