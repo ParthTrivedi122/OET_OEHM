@@ -18,32 +18,69 @@
    <link rel="icon" href="assets/img/logo-small.png" type="image/x-icon">
    <link rel="shortcut icon" href="assets/img/logo-small.png" type="image/x-icon">
    <style>
-      a {
-         text-decoration: none;
+      .button {
+         display: flex;
+         height: 50px;
+         padding: 0;
+         border: none;
+         outline: none;
+         border-radius: 5px;
+         overflow: hidden;
+         font-family: "Quicksand", sans-serif;
+         font-size: 16px;
+         font-weight: 500;
+         cursor: pointer;
       }
 
-      .accept {
-         color: #FFF;
-         background: #44CC44;
-         padding: 15px 20px;
-         box-shadow: 0 4px 0 0 #2EA62E;
+      .approve {
+         background-color: #0b6856;
       }
 
-      .accept:hover {
-         background: #6FE76F;
-         box-shadow: 0 4px 0 0 #7ED37E;
+      .reject {
+         background-color: red;
       }
 
-      .deny {
-         color: #FFF;
-         background: tomato;
-         padding: 15px 20px;
-         box-shadow: 0 4px 0 0 #CB4949;
+      .approve:hover {
+         background: #008168;
       }
 
-      .deny:hover {
-         background: rgb(255, 147, 128);
-         box-shadow: 0 4px 0 0 #EF8282;
+      .approve:active {
+         background: #006e58;
+      }
+
+      .reset {
+         background-color: rgb(3, 100, 61);
+      }
+
+      .reset:hover {
+         background: #03e0b4;
+      }
+
+      .reset:active {
+         background: #04f8c7;
+      }
+
+
+      .reject:hover {
+         background: #f12222;
+      }
+
+      .reject:active {
+         background: #f83e44;
+      }
+
+      .button__text,
+      .button__icon {
+         display: inline-flex;
+         align-items: center;
+         padding: 0 24px;
+         color: #fff;
+         height: 100%;
+      }
+
+      .button__icon {
+         font-size: 1.5em;
+         background: rgba(0, 0, 0, 0.08);
       }
    </style>
 </head>
@@ -132,73 +169,19 @@
          <div class="content container-fluid">
             <div class="page-header">
                <div class="row">
-                  <div class="col-sm-12">
+                  <div class="col-sm-10">
                      <h3 class="page-title">Welcome Admin!</h3>
                      <ul class="breadcrumb">
                         <li class="breadcrumb-item active">Dashboard</li>
                      </ul>
                   </div>
-               </div>
-            </div>
-            <div class="row">
-               <div class="col-xl-3 col-sm-6 col-12 d-flex">
-                  <div class="card bg-five w-100">
-                     <div class="card-body">
-                        <div class="db-widgets d-flex justify-content-between align-items-center">
-                           <div class="db-icon">
-                              <i class="fas fa-chalkboard"></i>
-                           </div>
-                           <div class="db-info">
-                              <h3>04/06</h3>
-                              <h6>Total Classes</h6>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-xl-3 col-sm-6 col-12 d-flex">
-                  <div class="card bg-six w-100">
-                     <div class="card-body">
-                        <div class="db-widgets d-flex justify-content-between align-items-center">
-                           <div class="db-icon">
-                              <i class="fas fa-user-graduate"></i>
-                           </div>
-                           <div class="db-info">
-                              <h3>40/60</h3>
-                              <h6>Total Students</h6>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-xl-3 col-sm-6 col-12 d-flex">
-                  <div class="card bg-seven w-100">
-                     <div class="card-body">
-                        <div class="db-widgets d-flex justify-content-between align-items-center">
-                           <div class="db-icon">
-                              <i class="fas fa-book-open"></i>
-                           </div>
-                           <div class="db-info">
-                              <h3>30/50</h3>
-                              <h6>Total Lessons</h6>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-xl-3 col-sm-6 col-12 d-flex">
-                  <div class="card bg-eight w-100">
-                     <div class="card-body">
-                        <div class="db-widgets d-flex justify-content-between align-items-center">
-                           <div class="db-icon">
-                              <i class="fas fa-clock"></i>
-                           </div>
-                           <div class="db-info">
-                              <h3>15/20</h3>
-                              <h6>Total Hours</h6>
-                           </div>
-                        </div>
-                     </div>
+                  <div class="col-sm-2">
+                     <button type="button " class="button reset" onclick="restSem()">
+                        <span class="button__text">Reset Semester</span>
+                        <span class="button__icon">
+                           <ion-icon name="sync-outline"></ion-icon>
+                        </span>
+                     </button>
                   </div>
                </div>
             </div>
@@ -265,10 +248,87 @@
                </div>
             </div>
             <div class="row">
-               <div class="col col-6">
-                  <h3>Approvals Students</h3>
+               <div class="col-xl-3 col-sm-6 col-12 d-flex">
+                  <div class="card bg-five w-100">
+                     <div class="card-body">
+                        <div class="db-widgets d-flex justify-content-between align-items-center">
+                           <div class="db-icon">
+                              <i class="fas fa-chalkboard"></i>
+                           </div>
+                           <div class="db-info">
+                              <h3>04/06</h3>
+                              <h6>Total Classes</h6>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
+               <div class="col-xl-3 col-sm-6 col-12 d-flex">
+                  <div class="card bg-six w-100">
+                     <div class="card-body">
+                        <div class="db-widgets d-flex justify-content-between align-items-center">
+                           <div class="db-icon">
+                              <i class="fas fa-user-graduate"></i>
+                           </div>
+                           <div class="db-info">
+                              <h3>40/60</h3>
+                              <h6>Total Students</h6>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xl-3 col-sm-6 col-12 d-flex">
+                  <div class="card bg-seven w-100">
+                     <div class="card-body">
+                        <div class="db-widgets d-flex justify-content-between align-items-center">
+                           <div class="db-icon">
+                              <i class="fas fa-book-open"></i>
+                           </div>
+                           <div class="db-info">
+                              <h3>30/50</h3>
+                              <h6>Total Lessons</h6>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xl-3 col-sm-6 col-12 d-flex">
+                  <div class="card bg-eight w-100">
+                     <div class="card-body">
+                        <div class="db-widgets d-flex justify-content-between align-items-center">
+                           <div class="db-icon">
+                              <i class="fas fa-clock"></i>
+                           </div>
+                           <div class="db-info">
+                              <h3>15/20</h3>
+                              <h6>Total Hours</h6>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col col-4">
+                  <h3>Approvals/Rejeted Students</h3>
+               </div>
+               </div>
+               <div class="row" style="margin-bottom:10px ;">
+                  <div class="col col-2 ">
+                     <button  class="button reject" onclick="getdata('rejected')">
+                        <span class="button__text" >Rejected</span>
+                        </span>
+                     </button>
+                     </div>
+                     <div class="col col-1">
+                     <button class="button approve" onclick="getdata('approval')">
+                        <span class="button__text" >Approvals</span>
+                        </span>
+                     </button>
 
+            </div>
+            
             </div>
             <div class="row">
                <div class="col-sm-12">
@@ -287,7 +347,6 @@
                                     <th>Domain</th>
                                     <th>Course Type</th>
                                     <th>Course Name</th>
-                                    <th>hours</th>
                                     <th>Hours</th>
                                     <th>Total Hours</th>
                                     <th>Approve</th>
@@ -318,18 +377,19 @@
    </div>
 
    <script>
-      async function getdata() {
+      async function getdata(choice) {
          var tbody = '';
-         var semester = "--Select Semester--";
+         var semester="--Select Semester--"
+         var apprej = choice;
          var type = "--Select Course Type--";
          var branch = "--Select Branch--";
          var data;
-
+         console.log(apprej)
          try {
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: { semester: semester, courseType: type, branch: branch }
+               data: { semester: semester, courseType: type, branch: branch ,apprej:apprej}
             });
             console.log(data.data.result);
             //   console.log(data.data.result[0].domain);
@@ -338,10 +398,13 @@
             var course = data.data.course;
             var certificates = data.data.certificates;
             var hours = 0;
+            var t; // to check for approval and rejected
+            
             if (data) {
                for (let i = 0; i < list.length; i++) {
+
                   console.log(list[i].courses_enrolled);
-                  if (list[i].course_approved == 0) {
+                  if (list[i].course_approved == 0 && list[i].course_rejected==0) {
                      tbody = tbody + `<tr>
                                        <td>${list[i].student_id}</td>
                                        <td>
@@ -355,15 +418,29 @@
                                        <td>${list[i].domain}</td>
                                        <td id="types">${list[i].courses_type}</td>
                                        <td>${list[i].courses_enrolled}</td>
-                                          <td>${list[i].courses_links}</td>
                                        <td>${list[i].total_hours}</td>
-                                       <td>${list[i].final_hours}</td>                                   
-                                       <td>
-                                          <a href="#" class="accept" onclick="approve(1,${list[i].id},${list[i].email})">ACCEPT <span class="fa fa-check"></span></a>
-                                       </td>
+                                       <td>${list[i].final_hours}</td>
+                                      
+                                       <td >
+                                          <button type="button" class="button approve" onclick="approve(1,'${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')" style="margin-bottom:10px">
+                                             <span class="button__text ">Approve</span>
+                                             <span class="button__icon">
+                                             <ion-icon name="checkmark-done-outline"></ion-icon></span>
+                                          </button>
+                                          <button type="button " class="button reject" onclick="approve(0,'${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
+                                             <span class="button__text">Reject</span>
+                                             <span class="button__icon">
+                                                <ion-icon name="close-outline"></ion-icon>
+                                             </span>
+                                          </button>
+                                </td>
                                     </tr>
                                     `;
 
+                  } else {
+                     if(list.length==0){
+                     tbody = "NO Request"
+                     }
                   }
                }
                document.getElementById('tbody').innerHTML = tbody;
@@ -376,42 +453,70 @@
 
       getdata();
 
-      async function approve(approve, id, email) {
-         console.log(approve, id, email);
+      async function restSem(){
+         try {
+            var data=await axios({
+               "url":"http://localhost:8000/resetSem",
+               "method":"POST",
+            })
+            if(data.data.result==1){
+               alert("Semester Reset")
+            }
+         }catch(e){
+            console.log("error is:", e);
+         }
+      }
+
+      async function approve(approve, id, email,semester,type) {
+         console.log("hello")
+         console.log(approve, id, email,semester,type);
          try {
             var response = await axios({
                url: "http://localhost:8000/approveStudentDataOnline",
                method: "post",
-               data: { approve: approve, id: id, email: email }
+               data: { approve: approve, id: id, email: email,semester:semester,type:type }
             });
             console.log(response.data.data);
             var list = response.data.data;
-            tbody = '';  // Clear tbody before appending new rows
-            for (let i = 0; i < list.length; i++) {
-               console.log(list[i].course_name);
-               if (list[i].course_approved == 0) {
-                  tbody += `<tr>
-                            <td>${list[i].student_id}</td>
-                            <td>${list[i].email}</td>
-                            <td>${list[i].student_name}</td>
-                            <td id="sem">${list[i].semester}</td>
-                            <td>${list[i].domain}</td>
-                            <td id="types">${list[i].courses_type}</td>
-                            <td>${list[i].courses_enrolled}</td>
-                            <td>${list[i].total_hours}</td>
-                            <td>${list[i].final_hours}</td>
-                            <td>${list[i].branch}</td>
-                            <td>
-                                <a href="#" class="accept" onclick="approve(1,${list[i].id},${list[i].email})">ACCEPT <span class="fa fa-check"></span></a>
-                            </td>
-                         </tr>`;
-               }
-            }
+            // tbody = '';  // Clear tbody before appending new rows
+            
+            // for (let i = 0; i < list.length; i++) {
+            //    //console.log(list[i].course_name);
+            //    if (list[i].course_approved == 0) {
+            //       tbody += `<tr>
+            //                 <td>${list[i].student_id}</td>
+            //                 <td>${list[i].email}</td>
+            //                 <td>${list[i].student_name}</td>
+            //                 <td id="sem">${list[i].semester}</td>
+            //                 <td>${list[i].branch}</td>
+            //                 <td>${list[i].domain}</td>
+            //                 <td id="types">${list[i].courses_type}</td>
+            //                 <td>${list[i].courses_enrolled}</td>
+            //                 <td>${list[i].total_hours}</td>
+            //                 <td>${list[i].final_hours}</td>
+                            
+            //                 <td >
+            //                               <button type="button" class="button approve" onclick="approve(1,'${list[i].id}','${list[i].email},'${list[i].semester}','${list[i].courses_type}')" style="margin-bottom:10px">
+            //                                  <span class="button__text ">Approve</span>
+            //                                  <span class="button__icon">
+            //                                  <ion-icon name="checkmark-done-outline"></ion-icon></span>
+            //                               </button>
+            //                               <button type="button " class="button reject" onclick="approve(0,'${list[i].id}','${list[i].email},'${list[i].semester}','${list[i].courses_type}')">
+            //                                  <span class="button__text">Reject</span>
+            //                                  <span class="button__icon">
+            //                                     <ion-icon name="close-outline"></ion-icon>
+            //                                  </span>
+            //                               </button>
+            //                     </td>
+            //              </tr>`;
+            //    }
+            // }
 
-            if (list.length == 0) {
-               tbody = "No Request";
-            }
-            document.getElementById('tbody').innerHTML = tbody;
+            // if (list.length == 0) {
+            //    tbody = "No Request";
+            // }
+            // document.getElementById('tbody').innerHTML = tbody;
+            getdata("approval")
          } catch (e) {
             console.log("error is:", e);
          }
@@ -425,6 +530,7 @@
    <script src="assets/plugins/apexchart/apexcharts.min.js"></script>
    <script src="assets/plugins/apexchart/chart-data.js"></script>
    <script src="assets/js/script.js"></script>
+   <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 
    <script src="assets/plugins/simple-calendar/jquery.simple-calendar.js"></script>
 </body>
