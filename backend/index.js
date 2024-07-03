@@ -3,6 +3,7 @@ const app= express();
 const cors = require('cors');
 const mysql = require('mysql');
 const formidable = require('express-formidable');
+const nodemailer = require('nodemailer');
 // const session = require("express-session");
 // const Login=require("./schema/registeredSchema");
 // const Customer=require("./schema/customerSchema");
@@ -15,7 +16,7 @@ app.use(cors());
 
 // Specify allowed origins, methods, and headers
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', // Replace with your client's domain
+  origin: 'http://127.0.0.1:5501', // Replace with your client's domain
   methods: 'GET,POST',
   allowedHeaders: 'Content-Type,Authorization',
 }));
@@ -29,10 +30,10 @@ app.use(formidable());
 //   });
 
 var con = mysql.createConnection({
-    host: "localhost",  
-    user: "root",
-    password: "",
-    database: "oet-oehm-student"
+    host: "35.200.243.194",
+    database: "oet-oehm",
+    user: "kjsce",
+    password: "diHgof-5pejqu-taxkuq"
   });
 
 // const dbConfig = {
@@ -58,6 +59,34 @@ con.connect(function(err) {
 //     console.log("1 record inserted");
 //   });
 });
+});
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'parthtrivedi690@gmail.com',
+      pass: 'ojfv kdyc hdqs wpqa'
+  }
+});
+
+app.post('/sendRejectionEmail', async (req, res) => {
+  const { id, email, subject, body } = req.fields;
+
+  const mailOptions = {
+      from: 'parthtrivedi690@gmail.com',
+      to: email,
+      subject: subject,
+      text: body
+  };
+
+  try {
+      await transporter.sendMail(mailOptions);
+      // Here you might want to update your database to mark the application as rejected
+      res.json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
 });
 
 
@@ -715,6 +744,91 @@ app.post("/getStudentDataOnline", async (req, res) => {
 //   }
 // });
 
+// app.post("/getStudentDataOnlineall", async (req, res) => {
+//   try {
+//     let query = `
+//       SELECT 
+//         u.roll_number AS student_id,
+//         u.name AS student_name,
+//         u.semester,
+//         e.course_id,
+//         e.type,
+//         e.course_approved,
+//         c.course_name,
+//         c.domain,
+//         e.course_rejected,
+//         e.total_hours,
+//         u.branch,
+//         u.email,
+//         e.id,
+//         e.course_completed
+//       FROM users u
+//       JOIN enrollments e ON u.email = e.email
+//       JOIN courses_online c ON e.course_id = c.course_id
+//       WHERE 1=1
+//     `;
+//     const { semester, branch, courseType, apprej } = req.fields;
+//     if (semester && semester !== "--Select Semester--") {
+//       query += ` AND u.semester = '${semester}'`;
+//     }
+//     if (courseType && courseType !== "--Select Course Type--") {
+//       query += ` AND e.type = '${courseType}'`;
+//     }
+//     if (branch && branch !== "--Select Branch--") {
+//       query += ` AND u.branch = '${branch}'`;
+//     }
+//     if (apprej && apprej === "approval") {
+//       query += ` AND e.course_approved = 0`;
+//     }
+//     if (apprej && apprej === "rejected") {
+//       query += ` AND e.course_rejected = 1`;
+//     }
+//     console.log("Query is =", query);
+//     const result = await new Promise((resolve, reject) => {
+//       con.query(query, function (err, result, fields) {
+//         if (err) reject(err);
+//         resolve(result);
+//       });
+//     });
+//     const studentData = {};
+//     result.forEach(student => {
+//       const key = `${student.email.trim()}_${student.type}_${student.semester.trim()}`;
+//       if (!studentData[key]) {
+//         studentData[key] = {
+//           id: student.id,
+//           student_id: student.student_id,
+//           student_name: student.student_name,
+//           semester: student.semester,
+//           email: student.email,
+//           course_approved: student.course_approved,
+//           courses_type: student.type,
+//           course_rejected: student.course_rejected,
+//           courses_enrolled: "",
+//           courses_links: "",
+//           domain: "",
+//           total_hours: "",
+//           final_hours: 0,
+//           branch: student.branch,
+//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+//           completion_colour: student.course_completed === 1 ? "success" : "danger"
+//         };
+//       }
+      
+//       studentData[key].courses_enrolled += (student.course_name || "N/A") + "<br>";
+//       studentData[key].courses_links += `<a href="${student.links}">${student.links || "No links found"}</a><br>`;
+//       studentData[key].domain += (student.domain || "N/A") + "<br>";
+//       studentData[key].total_hours += (student.total_hours || "N/A") + "<br>";
+//       studentData[key].final_hours += (parseInt(student.total_hours) || 0);
+//     });
+//     const formattedData = Object.values(studentData);
+//     console.log("Formatted Data:", formattedData);
+//     res.json({ result: formattedData });
+//   } catch (err) {
+//     console.error("Error retrieving data:", err);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 app.post("/getStudentDataOnlineall", async (req, res) => {
   try {
     let query = `
@@ -748,6 +862,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
     if (branch && branch !== "--Select Branch--") {
       query += ` AND u.branch = '${branch}'`;
     }
+    console.log(apprej);
     if (apprej && apprej === "approval") {
       query += ` AND e.course_approved = 0`;
     }
@@ -763,7 +878,8 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
     });
     const studentData = {};
     result.forEach(student => {
-      const key = `${student.email}_${student.type}_${student.semester}`;
+      console.log(student.semester)
+      const key = `${student.email.trim()}_${student.type}_${student.semester.trim()}`;
       if (!studentData[key]) {
         studentData[key] = {
           id: student.id,
@@ -784,9 +900,9 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
           completion_colour: student.course_completed === 1 ? "success" : "danger"
         };
       }
-      
+
       studentData[key].courses_enrolled += (student.course_name || "N/A") + "<br>";
-      studentData[key].courses_links += `<a href="${student.links}">${student.links || "No links found"}</a><br>`;
+      studentData[key].courses_links += `<a href="${student.links || '#'}">${student.links || "No links found"}</a><br>`;
       studentData[key].domain += (student.domain || "N/A") + "<br>";
       studentData[key].total_hours += (student.total_hours || "N/A") + "<br>";
       studentData[key].final_hours += (parseInt(student.total_hours) || 0);
@@ -802,7 +918,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
 
 
 app.post("/resetSem",async (req,res)=>{
-  con.query("UPDATE users SET attendance_verified=0,onboarded=0 WHERE 1",async function(err,result,fields) {
+  con.query("UPDATE users SET semester = CASE WHEN semester = 'V' THEN 'VI' WHEN semester = 'VI' THEN 'VII' ELSE semester END; where active=1",async function(err,result,fields) {
     if (err) throw err;
     console.log("Reset Sem");
     res.json({result:1})

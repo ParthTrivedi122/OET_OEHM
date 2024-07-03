@@ -1,0 +1,1 @@
+delete from  enrollments where email='advait.thakur@somaiya.edu' and  enrolled_semester='V'

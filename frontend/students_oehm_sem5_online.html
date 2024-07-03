@@ -412,7 +412,7 @@
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: { semester: semester, courseType: type, branch: branch }
+               data: { semester: "VII", courseType: type, branch: branch }
             });
             console.log(data.data.result);
             // console.log(data.data.result[0].domain);

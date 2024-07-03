@@ -47,6 +47,53 @@
       .approve:active {
          background: #006e58;
       }
+      .popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.popup-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+#openGmailBtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#openGmailBtn:hover {
+    background-color: #45a049;
+}
 
       .reset {
          background-color: rgb(3, 100, 61);
@@ -310,26 +357,11 @@
                </div>
             </div>
             <div class="row">
-               <div class="col col-4">
-                  <h3>Approvals/Rejeted Students</h3>
+               <div class="col col-8">
+                  <h3>Approvals/Rejected Student</h3>
                </div>
                </div>
-               <div class="row" style="margin-bottom:10px ;">
-                  <div class="col col-2 ">
-                     <button  class="button reject" onclick="getdata('rejected')">
-                        <span class="button__text" >Rejected</span>
-                        </span>
-                     </button>
-                     </div>
-                     <div class="col col-1">
-                     <button class="button approve" onclick="getdata('approval')">
-                        <span class="button__text" >Approvals</span>
-                        </span>
-                     </button>
-
-            </div>
-            
-            </div>
+               
             <div class="row">
                <div class="col-sm-12">
                   <div class="card card-table">
@@ -367,6 +399,16 @@
 
 
       </div>
+      <div id="emailPopup" class="popup" style="display:none;">
+         <div class="popup-content">
+             <span class="close">&times;</span>
+             <h2>Send Rejection Email</h2>
+             <p><strong>To:</strong> <span id="popupEmail"></span></p>
+             <p><strong>Subject:</strong> <span id="popupSubject"></span></p>
+             <p><strong>Message:</strong> <span id="popupBody"></span></p>
+             <button id="openGmailBtn">Open in Gmail</button>
+         </div>
+     </div>
       <div class="row">
 
       </div>
@@ -379,8 +421,10 @@
    <script>
       async function getdata(choice) {
          var tbody = '';
-         var semester="--Select Semester--"
-         var apprej = choice;
+         var semester="--Select Semester--";
+         if(choice==1){
+         var apprej = "approval";
+         }
          var type = "--Select Course Type--";
          var branch = "--Select Branch--";
          var data;
@@ -389,7 +433,7 @@
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: { semester: semester, courseType: type, branch: branch ,apprej:apprej}
+               data: { semester: "VII", courseType: type, branch: branch ,apprej:"approval"}
             });
             console.log(data.data.result);
             //   console.log(data.data.result[0].domain);
@@ -427,7 +471,7 @@
                                              <span class="button__icon">
                                              <ion-icon name="checkmark-done-outline"></ion-icon></span>
                                           </button>
-                                          <button type="button " class="button reject" onclick="approve(0,'${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
+                                          <button type="button " class="button reject"  onclick="approve(0,'${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
                                              <span class="button__text">Reject</span>
                                              <span class="button__icon">
                                                 <ion-icon name="close-outline"></ion-icon>
@@ -467,7 +511,61 @@
          }
       }
 
+      function showRejectionPopup(id, email, semester, type) {
+    let subject = type.toLowerCase().includes('oet') ? 'Your OET is Rejected' : 'Your OEHM is Rejected';
+    let body = 'Kindly refill the data.';
+    
+    document.getElementById('popupEmail').textContent = email;
+    document.getElementById('popupSubject').textContent = subject;
+    document.getElementById('popupBody').value = body;
+    
+    
+        sendRejectionEmail(id, email, subject, document.getElementById('popupBody').value);
+    
+    
+    //document.getElementById('emailPopup').style.display = "block";
+}
+
+async function sendRejectionEmail(id, email, subject, body) {
+    try {
+        const response = await axios.post('http://localhost:8000/sendRejectionEmail', {
+            id: id,
+            email: email,
+            subject: subject,
+            body: body
+        });
+        
+        if (response.data.success) {
+            alert('Email sent successfully');
+            document.getElementById('emailPopup').style.display = "none";
+        } else {
+            alert('Failed to send email');
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        alert('An error occurred while sending the email');
+    }
+}
+
+
       async function approve(approve, id, email,semester,type) {
+         console.log("jello");
+         if (approve === 0) {
+        
+            showRejectionPopup(id, email, semester, type);
+         }
+        // Proceed with the rejection process on the server
+        try {
+            var response = await axios({
+                url: "http://localhost:8000/approveStudentDataOnline",
+                method: "post",
+                data: { approve: approve, id: id, email: email, semester: semester, type: type }
+            });
+            // Handle the response as needed
+        } catch (e) {
+            console.log("Error in rejection process:", e);
+        }
+    
          console.log("hello")
          console.log(approve, id, email,semester,type);
          try {
@@ -478,49 +576,12 @@
             });
             console.log(response.data.data);
             var list = response.data.data;
-            // tbody = '';  // Clear tbody before appending new rows
-            
-            // for (let i = 0; i < list.length; i++) {
-            //    //console.log(list[i].course_name);
-            //    if (list[i].course_approved == 0) {
-            //       tbody += `<tr>
-            //                 <td>${list[i].student_id}</td>
-            //                 <td>${list[i].email}</td>
-            //                 <td>${list[i].student_name}</td>
-            //                 <td id="sem">${list[i].semester}</td>
-            //                 <td>${list[i].branch}</td>
-            //                 <td>${list[i].domain}</td>
-            //                 <td id="types">${list[i].courses_type}</td>
-            //                 <td>${list[i].courses_enrolled}</td>
-            //                 <td>${list[i].total_hours}</td>
-            //                 <td>${list[i].final_hours}</td>
-                            
-            //                 <td >
-            //                               <button type="button" class="button approve" onclick="approve(1,'${list[i].id}','${list[i].email},'${list[i].semester}','${list[i].courses_type}')" style="margin-bottom:10px">
-            //                                  <span class="button__text ">Approve</span>
-            //                                  <span class="button__icon">
-            //                                  <ion-icon name="checkmark-done-outline"></ion-icon></span>
-            //                               </button>
-            //                               <button type="button " class="button reject" onclick="approve(0,'${list[i].id}','${list[i].email},'${list[i].semester}','${list[i].courses_type}')">
-            //                                  <span class="button__text">Reject</span>
-            //                                  <span class="button__icon">
-            //                                     <ion-icon name="close-outline"></ion-icon>
-            //                                  </span>
-            //                               </button>
-            //                     </td>
-            //              </tr>`;
-            //    }
-            // }
-
-            // if (list.length == 0) {
-            //    tbody = "No Request";
-            // }
-            // document.getElementById('tbody').innerHTML = tbody;
-            getdata("approval")
+             getdata(1)
          } catch (e) {
             console.log("error is:", e);
          }
       }
+   
 
    </script>
    <script src="assets/js/jquery-3.6.0.min.js"></script>

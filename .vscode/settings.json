@@ -1,3 +1,19 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "35.200.243.194",
+            "port": 3306,
+            "driver": "MariaDB",
+            "database": "oet-oehm",
+            "username": "kjsce",
+            "password": "diHgof-5pejqu-taxkuq",
+            "name": "KJSCE"
+        }
+    ]
 }
