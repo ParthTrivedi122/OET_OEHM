@@ -412,7 +412,7 @@
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: { semester: "VII", courseType: type, branch: branch }
+               data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
             console.log(data.data.result);
             // console.log(data.data.result[0].domain);
@@ -457,7 +457,7 @@
                                           <td>${list[i].courses_links}</td>
                                        <td>${list[i].total_hours}</td>
                                        <td>${list[i].final_hours}</td>
-                                       <td><div class="btn btn-${list[i].completion_colour}">${list[i].completion_status}</div></td>
+                                       <td><div class="btn btn-${list[i].completion_colour}" onclick="complete('${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">Mark as complete</div></td>
                                        <td class="text-right">
                                           <div class="actions">
                                              
@@ -510,6 +510,21 @@
       async function deleteStudent(id) {
          console.log(id);
          deletestdID = id;
+      }
+
+      async function complete(id,email,semester,type){
+         console.log(id,email,semester,type);
+         var complete = await axios({
+            url: `http://localhost:8000/completeStudentDataOnline`,
+            method: "post",
+            data: { id: id, email: email, semester: semester, type: type }
+            });
+            console.log(complete);
+            if(complete.data.result==1){
+               getdata();
+            }else{
+               alert("Error while deleting");
+            }
       }
 
    </script>

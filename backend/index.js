@@ -850,7 +850,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
       FROM users u
       JOIN enrollments e ON u.email = e.email
       JOIN courses_online c ON e.course_id = c.course_id
-      WHERE 1=1
+      WHERE 1=1  and e.course_completed=0 and u.active=1
     `;
     const { semester, branch, courseType, apprej } = req.fields;
     if (semester && semester !== "--Select Semester--") {
@@ -866,8 +866,8 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
     if (apprej && apprej === "approval") {
       query += ` AND e.course_approved = 0`;
     }
-    if (apprej && apprej === "rejected") {
-      query += ` AND e.course_rejected = 1`;
+    if (apprej && apprej === "approved") {
+      query += ` AND e.course_approved = 1`;
     }
     console.log("Query is =", query);
     const result = await new Promise((resolve, reject) => {
@@ -918,34 +918,73 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
 
 
 app.post("/resetSem",async (req,res)=>{
-  con.query("UPDATE users SET semester = CASE WHEN semester = 'V' THEN 'VI' WHEN semester = 'VI' THEN 'VII' ELSE semester END; where active=1",async function(err,result,fields) {
+  con.query("UPDATE users SET semester = CASE WHEN semester = 'V' THEN 'VI' WHEN semester = 'VI' THEN 'VII' ELSE semester END where active=1",async function(err,result,fields) {
     if (err) throw err;
     console.log("Reset Sem");
     res.json({result:1})
   })
 })
 
+const axios = require('axios');
+const crypto = require('crypto');
 
-app.post("/approveStudentDataOnline",async (req,res)=>{
-  console.log(req.fields.email);
+const WEBHOOK_URL = 'https://oet-oehm-ingvj2pida-el.a.run.app//webhook/trigger-reonboarding';
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "SM3MvcSjjBKySAPStk8rWarMhcazQ6cT"; // Same secret as in the student system
+
+async function triggerReonboarding(userEmail) {
+  const payload = JSON.stringify({ userEmail });
+  
+  const signature = crypto
+    .createHmac('sha256', WEBHOOK_SECRET)
+    .update(payload)
+    .digest('hex');
+
   try {
-    query="";
-    if(req.fields.approve==0){
-      query="UPDATE enrollments SET course_approved = 0,course_rejected=1 WHERE email='"+req.fields.email+"' and enrolled_semester='"+req.fields.semester+"' and type='"+req.fields.type+"'";
+    const response = await axios.post(WEBHOOK_URL, { userEmail }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Webhook-Signature': signature
+      }
+    });
 
-    }else{
-      query="UPDATE enrollments SET course_approved = 1,course_rejected=0 WHERE email='"+req.fields.email+"' and enrolled_semester='"+req.fields.semester+"' and type='"+req.fields.type+"'";
-    }
-    console.log("Approve is : ",query);
-    con.query(query, async function (err, result, fields) {
-      if (err) throw err;
-      
-    
-      res.json({"msg":"Susscess"})}
-      
-  );
-  }catch(e){
-    console.log("Error is : ",e);
+    return response.data;
+  } catch (error) {
+    console.error('Error triggering re-onboarding:', error);
+    throw error;
+  }
+}
+
+
+app.post("/approve",async (req,res)=>{
+  const query=`UPDATE enrollments SET course_approved=1 WHERE email="${req.fields.email}" and enrolled_semester="${req.fields.semester}" and type="${req.fields.type}"`
+  console.log("query is ",query)
+  con.query(query,async function(err,result,fields) {
+    if (err) throw err;
+    console.log("Reset Sem");
+    res.json({result:1})
+  });
+})
+
+app.post("/completeStudentDataOnline",async (req,res)=>{
+  const query=`UPDATE enrollments SET course_completed=1 WHERE email="${req.fields.email}" and enrolled_semester="${req.fields.semester}" and type="${req.fields.type}"`
+  console.log("query is ",query)
+  con.query(query,async function(err,result,fields) {
+    if (err) throw err;
+    console.log("Reset Sem");
+    res.json({result:1})
+  });
+})
+
+app.post("/webhook/trigger-reonboarding",async (req,res)=>{
+  console.log(req.fields.email);
+  const { userEmail } = req.fields;
+  console.log(userEmail)
+  try {
+    const result = await triggerReonboarding(userEmail);
+    console.log(result)
+    res.json({"result":result.success});
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to trigger re-onboarding' });
   }
 })
 

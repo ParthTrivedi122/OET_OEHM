@@ -433,7 +433,7 @@
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: { semester: "VII", courseType: type, branch: branch ,apprej:"approval"}
+               data: {  courseType: type, branch: branch ,apprej:"approval"}
             });
             console.log(data.data.result);
             //   console.log(data.data.result[0].domain);
@@ -553,33 +553,38 @@ async function sendRejectionEmail(id, email, subject, body) {
          if (approve === 0) {
         
             showRejectionPopup(id, email, semester, type);
-         }
+         
         // Proceed with the rejection process on the server
-        try {
-            var response = await axios({
-                url: "http://localhost:8000/approveStudentDataOnline",
-                method: "post",
-                data: { approve: approve, id: id, email: email, semester: semester, type: type }
-            });
-            // Handle the response as needed
-        } catch (e) {
-            console.log("Error in rejection process:", e);
-        }
-    
+       
          console.log("hello")
          console.log(approve, id, email,semester,type);
          try {
             var response = await axios({
-               url: "http://localhost:8000/approveStudentDataOnline",
+               url: "http://localhost:8000/webhook/trigger-reonboarding",
                method: "post",
-               data: { approve: approve, id: id, email: email,semester:semester,type:type }
+               data: { approve: approve, id: id, userEmail: email,semester:semester,type:type }
             });
-            console.log(response.data.data);
-            var list = response.data.data;
-             getdata(1)
+            console.log(response.data.result);
+            //var list = response.data.data;
+            if(response.data.result){
+             getdata()
+            }
          } catch (e) {
             console.log("error is:", e);
          }
+      }else{
+         var response = await axios({
+               url: "http://localhost:8000/approve",
+               method: "post",
+               data: { approve: approve, id: id, email: email,semester:semester,type:type }
+            });
+            console.log("approve",response.data.result)
+            if(response.data.result==1){
+               getdata()
+            }else{
+               alert("Error")
+            }
+      }
       }
    
 
