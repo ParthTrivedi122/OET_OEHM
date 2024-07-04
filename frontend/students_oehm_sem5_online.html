@@ -459,16 +459,11 @@
                                        <td>${list[i].final_hours}</td>
                                        <td><div class="btn btn-${list[i].completion_colour}" onclick="complete('${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">Mark as complete</div></td>
                                        <td class="text-right">
-                                          <div class="actions">
+                                          <button type="button"  onclick="email('${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
                                              
-                                             <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModals">
-                                                <i class="fas fa-pen"></i>
-                                             </a>
-
-                                             <a href="#" class="btn btn-sm bg-danger-light" onclick="deleteStudent(${list[i].student_id})" data-toggle="modal" data-target="#exampleModal">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
+<i class="fa-solid fa-envelope" style="color: #f10404;"></i>
+                        
+                                          </button>
                                        </td>
                                     </tr>
                                     `;
@@ -481,6 +476,57 @@
          }
       }
 
+      async function email(email,semester,type){
+         console.log(email);
+         showRejectionPopup( email, semester, type)
+      }
+
+      function getCheckedStudentNames() {
+    const checkboxes = document.querySelectorAll('.checkbox:checked');
+    let names = [];
+    checkboxes.forEach((checkbox) => {
+        names.push(checkbox.getAttribute('value'));
+    });
+    return names;
+}
+//console.log(getCheckedStudentNames());
+
+      function showRejectionPopup( email, semester, type) {
+    let subject = type.toLowerCase().includes('oet') ? 'Your OET Course Certificates are Rejected' : 'Your OEHM Course Certificate  is Rejected';
+    let body = 'Kindly Resubmit the Certificates of the following courses : .\n';
+    
+    
+    
+        sendRejectionEmail( email, subject, body);
+    
+    
+    //document.getElementById('emailPopup').style.display = "block";
+}
+
+async function sendRejectionEmail(email, subject, body) {
+   const studentNames = getCheckedStudentNames();
+    const emailBody = "*"+studentNames.join('\n');
+    console.log(emailBody)
+
+    try {
+        const response = await axios.post('http://localhost:8000/sendCourseLinkRejectEmail', {
+            
+            email: email,
+            subject: subject,
+            body: body+emailBody
+        });
+        
+        if (response.data.success) {
+            alert('Email sent successfully');
+            // document.getElementById('emailPopup').style.display = "none";
+        } else {
+            alert('Failed to send email');
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        alert('An error occurred while sending the email');
+    }
+}
 
 
       var deletestdID;

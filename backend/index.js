@@ -69,6 +69,26 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+app.post('/sendCourseLinkRejectEmail', async (req, res) => {
+  const {  email, subject, body } = req.fields;
+
+  const mailOptions = {
+      from: 'parthtrivedi690@gmail.com',
+      to: email,
+      subject: subject,
+      text: body
+  };
+
+  try {
+      await transporter.sendMail(mailOptions);
+      // Here you might want to update your database to mark the application as rejected
+      res.json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
+});
+
 app.post('/sendRejectionEmail', async (req, res) => {
   const { id, email, subject, body } = req.fields;
 
@@ -902,7 +922,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
       }
 
       studentData[key].courses_enrolled += (student.course_name || "N/A") + "<br>";
-      studentData[key].courses_links += `<a href="${student.links || '#'}">${student.links || "No links found"}</a><br>`;
+      studentData[key].courses_links += `<input type="checkbox" class="checkbox" value="${student.course_name}"><a href="${student.links || '#'}">${student.links || "No links found"}</a><br>`;
       studentData[key].domain += (student.domain || "N/A") + "<br>";
       studentData[key].total_hours += (student.total_hours || "N/A") + "<br>";
       studentData[key].final_hours += (parseInt(student.total_hours) || 0);
