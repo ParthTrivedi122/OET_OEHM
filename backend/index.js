@@ -226,133 +226,6 @@ app.post("/getStudentDataSem5OehmOnline", async (req, res) => {
   }
 });
 
-// app.post("/getStudentDataSemOehmOnline", async (req, res) => {
-//   var sem=req.fields.semesterFilter;
-//   var type=req.fields.courseFilter;
-//   if(sem==undefined || sem==""){
-//     if(type==undefined || type==""){
-//       try {
-//         const result = await new Promise((resolve, reject) => {
-//             con.query("SELECT * FROM students_online_oehm ", function (err, result, fields) {
-//                 if (err) throw err;
-//                 resolve(result);
-//             });
-//         });
-  
-//         const courseDetailsPromises = result.map(student => {
-//             return new Promise((resolve, reject) => {
-//                 con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-//                     if (err) throw err;
-//                     if (results && results.length > 0) {
-//                       resolve({ course_name: results[0].course_name, domain: results[0].Domain });
-//                   } else {
-//                       resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
-//                   }
-//                 });
-//             });
-//         });
-  
-//         const courseDetails = await Promise.all(courseDetailsPromises);
-  
-//         res.json({ "result": result, "course": courseDetails });
-//     } catch (err) {
-//         console.error("Error retrieving data:", err);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-//   }else{
-//     try {
-//       const result = await new Promise((resolve, reject) => {
-//           con.query("SELECT * FROM students_online_oehm where course_type='"+type+"'", function (err, result, fields) {
-//               if (err) throw err;
-//               resolve(result);
-//           });
-//       });
-
-//       const courseDetailsPromises = result.map(student => {
-//           return new Promise((resolve, reject) => {
-//               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-//                   if (err) throw err;
-//                   if (results && results.length > 0) {
-//                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
-//                 } else {
-//                     resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
-//                 }
-//               });
-//           });
-//       });
-
-//       const courseDetails = await Promise.all(courseDetailsPromises);
-
-//       res.json({ "result": result, "course": courseDetails });
-//   } catch (err) {
-//       console.error("Error retrieving data:", err);
-//       res.status(500).json({ error: "Internal server error" });
-//   }
-//     }
-//   }else{
-//     if(type==undefined || type==""){
-//       try {
-//         const result = await new Promise((resolve, reject) => {
-//             con.query("SELECT * FROM students_online_oehm where semester='"+sem+"'", function (err, result, fields) {
-//                 if (err) throw err;
-//                 resolve(result);
-//             });
-//         });
-  
-//         const courseDetailsPromises = result.map(student => {
-//             return new Promise((resolve, reject) => {
-//                 con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-//                     if (err) throw err;
-//                     if (results && results.length > 0) {
-//                       resolve({ course_name: results[0].course_name, domain: results[0].Domain });
-//                   } else {
-//                       resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
-//                   }
-//                 });
-//             });
-//         });
-  
-//         const courseDetails = await Promise.all(courseDetailsPromises);
-  
-//         res.json({ "result": result, "course": courseDetails });
-//     } catch (err) {
-//         console.error("Error retrieving data:", err);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-//   }else{
-//     try {
-//       const result = await new Promise((resolve, reject) => {
-//           con.query("SELECT * FROM students_online_oehm where course_type='"+type+"' and semester='"+sem+"'", function (err, result, fields) {
-//               if (err) throw err;
-//               resolve(result);
-//           });
-//       });
-
-//       const courseDetailsPromises = result.map(student => {
-//           return new Promise((resolve, reject) => {
-//               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-//                   if (err) throw err;
-//                   if (results && results.length > 0) {
-//                     resolve({ course_name: results[0].course_name, domain: results[0].Domain });
-//                 } else {
-//                     resolve({ course_name: "N/A", domain: "N/A" }); // Provide default values or handle empty results
-//                 }
-//               });
-//           });
-//       });
-
-//       const courseDetails = await Promise.all(courseDetailsPromises);
-
-//       res.json({ "result": result, "course": courseDetails });
-//   } catch (err) {
-//       console.error("Error retrieving data:", err);
-//       res.status(500).json({ error: "Internal server error" });
-//   }
-//   }
-// }
-  
-// });
-
 
 app.post("/getStudentDataSem6OehmOnline", async (req, res) => {
   try {
@@ -441,414 +314,6 @@ app.post("/getStudentDataOnline", async (req, res) => {
 
 
 
-// app.post("/getStudentDataOnlineall", async (req, res) => {
-//   try {
-//       let query = "SELECT * FROM students_online WHERE 1=1"; // Initial query
-     
-//       const { semester, courseType, branch } = req.fields; // Assuming the frontend sends the selected filters in the request body
-//       console.log("semester is ",semester);
-//       if (semester && semester !== "--Select Semester--") {
-//           query += ` AND semester = '${semester}'`;
-//       }
-
-//       if (courseType && courseType !== "--Select Course Type--") {
-//           query += ` AND course_type = '${courseType}'`;
-//       }
-
-//       if (branch && branch !== "--Select Branch--") {
-//           query += ` AND branch = '${branch}'`;
-//       }
-//       console.log("Query is =",query);
-//       const result = await new Promise((resolve, reject) => {
-//           con.query(query, function (err, result, fields) {
-//               if (err) throw err;
-//               resolve(result);
-//           });
-//       });
-
-//       const courseDetailsPromises = result.map(student => {
-//           return new Promise((resolve, reject) => {
-//               con.query("SELECT course_name, Domain FROM courses_online WHERE course_id = ?", [student.course_id], function (err, results, fields) {
-//                   if (err) throw err;
-//                   resolve({ course_name: results[0].course_name, domain: results[0].Domain });
-//               });
-//           });
-//       });
-
-//       const courseDetails = await Promise.all(courseDetailsPromises);
-
-//       res.json({ "result": result, "course": courseDetails });
-//   } catch (err) {
-//       console.error("Error retrieving data:", err);
-//       res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-
-// app.post("/getStudentDataOnlineall", async (req, res) => {
-//   try {
-//       let query = `
-//           SELECT 
-//               u.roll_number AS student_id,
-//               u.name AS student_name,
-//               u.semester,
-//               e.course_id,
-//               e.type,
-//               e.course_approved,
-//               c.course_name,
-//               c.domain,
-//               e.total_hours,
-//               u.branch,
-//               u.email,
-//               e.id,
-//               e.course_completed
-//           FROM users u
-//           JOIN enrollments e ON u.email = e.email
-//           JOIN courses_online c ON e.course_id = c.course_id
-//           WHERE 1=1
-//       `;
-
-//       const { semester, branch, courseType } = req.fields;  // Removed courseType as it's not present in enrollments table
-//       if (semester && semester !== "--Select Semester--") {
-//           query += ` AND u.semester = '${semester}'`;
-//       }
-
-//       if (courseType && courseType !== "--Select Course Type--") {
-//           query += ` AND e.type = '${courseType}'`;
-//       }
-
-//       if (branch && branch !== "--Select Branch--") {
-//           query += ` AND u.branch = '${branch}'`;
-//       }
-
-//       query += " GROUP BY u.roll_number, e.course_id"; // Group by student and course
-
-//       console.log("Query is =", query);
-//       const result = await new Promise((resolve, reject) => {
-//           con.query(query, async function (err, result, fields) {
-//               if (err) reject(err);
-//               resolve(result);
-//           });
-//       });
-
-//       const getCertificates = (email,course_id) => {
-//           return new Promise((resolve, reject) => {
-//               con.query(
-//                   "SELECT submission_link FROM submissions WHERE email = ? and course_id= ? GROUP BY submission_link",
-//                   [email,course_id],
-//                   function (err, results) {
-//                       if (err) return reject(err);
-//                       const certificates = results.map(row => `<a href="${row.submission_link}">${row.submission_link}</a><br>`);
-//                       resolve(certificates);
-//                   }
-//               );
-//           });
-//       };
-
-//       for (let student of result) {
-//           student.certificates = await getCertificates(student.email);
-//       }
-
-//       // Formatting data with <br> tag
-//       const formattedData = result.map(student => ({
-//           id: student.id,
-//           student_id: student.student_id,
-//           student_name: student.student_name,
-//           semester: student.semester,
-//           email: student.email,
-//           course_approved: student.course_approved,
-//           courses_type: student.type,
-//           certificates: student.certificates.join(''),
-//           courses_enrolled: student.course_name || "N/A",
-//           courses_links: student.links || "No links found",
-//           domain: student.domain || "N/A",
-//           total_hours: student.total_hours || "N/A",
-//           branch: student.branch || "N/A",
-//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
-//           completion_colour: student.course_completed === 1 ? "success" : "danger"
-//       }));
-
-//       console.log("Certificates:", formattedData.map(student => student.certificates));
-//       res.json({ "result": formattedData });
-//   } catch (err) {
-//       console.error("Error retrieving data:", err);
-//       res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-
-// app.post("/getStudentDataOnlineall", async (req, res) => {
-//   try {
-//       let query = `
-//           SELECT 
-//               u.roll_number AS student_id,
-//               u.name AS student_name,
-//               u.semester,
-//               e.course_id,
-//               e.type,
-//               e.course_approved,
-//               c.course_name,
-//               c.domain,
-//               e.total_hours,
-//               u.branch,
-//               u.email,
-//               e.id,
-//               e.course_completed
-//           FROM users u
-//           JOIN enrollments e ON u.email = e.email
-//           JOIN courses_online c ON e.course_id = c.course_id
-//           WHERE 1=1
-//       `;
-
-//       const { semester, branch, courseType } = req.fields;  // Make sure you're using `req.body` to get the request data
-//       if (semester && semester !== "--Select Semester--") {
-//           query += ` AND u.semester = '${semester}'`;
-//       }
-
-//       if (courseType && courseType !== "--Select Course Type--") {
-//           query += ` AND e.type = '${courseType}'`;
-//       }
-
-//       if (branch && branch !== "--Select Branch--") {
-//           query += ` AND u.branch = '${branch}'`;
-//       }
-
-//       query += " GROUP BY u.roll_number, e.course_id"; // Group by student and course
-
-//       console.log("Query is =", query);
-//       const result = await new Promise((resolve, reject) => {
-//           con.query(query, function (err, result, fields) {
-//               if (err) reject(err);
-//               resolve(result);
-//           });
-//       });
-
-//       // const getCertificates = (email, course_id) => {
-//       //     return new Promise((resolve, reject) => {
-//       //         con.query(
-//       //             "SELECT submission_link FROM submissions WHERE email = ? AND course_id = -? GROUP BY submission_link",
-//       //             [email, course_id],
-//       //             function (err, results) {
-//       //                 if (err) return reject(err);
-//       //                 const certificates = results.map(row => `<a href="${row.submission_link}">${row.submission_link}</a><br>`);
-//       //                 resolve(certificates);
-//       //             }
-//       //         );
-//       //     });
-//       // };
-
-//       // for (let student of result) {
-//       //     student.certificates = await getCertificates(student.email, student.course_id);
-//       // }
-
-//       // // Formatting data with <br> tag
-//       const formattedData = result.map(student => ({
-//           id: student.id,
-//           student_id: student.student_id,
-//           student_name: student.student_name,
-//           semester: student.semester,
-//           email: student.email,
-//           course_approved: student.course_approved,
-//           courses_type: student.type,
-//           // certificates: student.certificates.join(''),
-//           courses_enrolled: student.course_name || "N/A",
-//           courses_links: student.links || "No links found",
-//           domain: student.domain || "N/A",
-//           total_hours: student.total_hours || "N/A",
-//           branch: student.branch || "N/A",
-//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
-//           completion_colour: student.course_completed === 1 ? "success" : "danger"
-//       }));
-
-//       console.log("Certificates:", formattedData);
-//       res.json({ "result": formattedData });
-//   } catch (err) {
-//       console.error("Error retrieving data:", err);
-//       res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-// app.post("/getStudentDataOnlineall", async (req, res) => {
-//   try {
-//     let query = `
-//       SELECT 
-//         u.roll_number AS student_id,
-//         u.name AS student_name,
-//         u.semester,
-//         e.course_id,
-//         e.type,
-//         e.course_approved,
-//         c.course_name,
-//         c.domain,
-//         e.course_rejected,
-//         e.total_hours,
-//         u.branch,
-//         u.email,
-//         e.id,
-//         e.course_completed
-//       FROM users u
-//       JOIN enrollments e ON u.email = e.email
-//       JOIN courses_online c ON e.course_id = c.course_id
-//       WHERE 1=1
-//     `;
-
-//     const { semester, branch, courseType,apprej } = req.fields;
-//     if (semester && semester !== "--Select Semester--") {
-//       query += ` AND u.semester = '${semester}'`;
-//     }
-
-//     if (courseType && courseType !== "--Select Course Type--") {
-//       query += ` AND e.type = '${courseType}'`;
-//     }
-
-//     if (branch && branch !== "--Select Branch--") {
-//       query += ` AND u.branch = '${branch}'`;
-//     }
-
-//     if (apprej && apprej==="approval" ) {
-//       query += ` AND e.course_approved = 0`;
-//     }
-
-//     if (apprej && apprej==="rejected" ) {
-//       query += ` AND e.course_rejected = '1'`;
-//     }
-
-
-//     console.log("Query is =", query);
-//     const result = await new Promise((resolve, reject) => {
-//       con.query(query, function (err, result, fields) {
-//         if (err) reject(err);
-//         resolve(result);
-//       });
-//     });
-
-//     const studentData = {};
-
-//     result.forEach(student => {
-//       if (!studentData[student.student_id]) {
-//         studentData[student.student_id] = {
-//           id: student.id,
-//           student_id: student.student_id,
-//           student_name: student.student_name,
-//           semester: student.semester,
-//           email: student.email,
-//           course_approved: student.course_approved,
-//           courses_type: student.type,
-//           courses_enrolled: "",
-//           courses_links: "",
-//           domain: "",
-//           total_hours: "",
-//           final_hours:0,
-//           branch: student.branch,
-//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
-//           completion_colour: student.course_completed === 1 ? "success" : "danger"
-//         };
-//       }
-      
-//       studentData[student.student_id].courses_enrolled += (student.course_name || "N/A") + "<br>";
-//       studentData[student.student_id].courses_links += `<a href="">`+(student.links || "No links found") + "</a><br>";
-//       studentData[student.student_id].domain += (student.domain || "N/A") + "<br>";
-//       studentData[student.student_id].total_hours += (student.total_hours || "N/A") + "<br>";
-//       studentData[student.student_id].final_hours += (parseInt(student.total_hours) || 0) ;
-
-
-//     });
-
-//     const formattedData = Object.values(studentData);
-
-//     console.log("Formatted Data:", formattedData);
-//     res.json({ result: formattedData });
-//   } catch (err) {
-//     console.error("Error retrieving data:", err);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-// app.post("/getStudentDataOnlineall", async (req, res) => {
-//   try {
-//     let query = `
-//       SELECT 
-//         u.roll_number AS student_id,
-//         u.name AS student_name,
-//         u.semester,
-//         e.course_id,
-//         e.type,
-//         e.course_approved,
-//         c.course_name,
-//         c.domain,
-//         e.course_rejected,
-//         e.total_hours,
-//         u.branch,
-//         u.email,
-//         e.id,
-//         e.course_completed
-//       FROM users u
-//       JOIN enrollments e ON u.email = e.email
-//       JOIN courses_online c ON e.course_id = c.course_id
-//       WHERE 1=1
-//     `;
-//     const { semester, branch, courseType, apprej } = req.fields;
-//     if (semester && semester !== "--Select Semester--") {
-//       query += ` AND u.semester = '${semester}'`;
-//     }
-//     if (courseType && courseType !== "--Select Course Type--") {
-//       query += ` AND e.type = '${courseType}'`;
-//     }
-//     if (branch && branch !== "--Select Branch--") {
-//       query += ` AND u.branch = '${branch}'`;
-//     }
-//     if (apprej && apprej === "approval") {
-//       query += ` AND e.course_approved = 0`;
-//     }
-//     if (apprej && apprej === "rejected") {
-//       query += ` AND e.course_rejected = 1`;
-//     }
-//     console.log("Query is =", query);
-//     const result = await new Promise((resolve, reject) => {
-//       con.query(query, function (err, result, fields) {
-//         if (err) reject(err);
-//         resolve(result);
-//       });
-//     });
-//     const studentData = {};
-//     result.forEach(student => {
-//       const key = `${student.email.trim()}_${student.type}_${student.semester.trim()}`;
-//       if (!studentData[key]) {
-//         studentData[key] = {
-//           id: student.id,
-//           student_id: student.student_id,
-//           student_name: student.student_name,
-//           semester: student.semester,
-//           email: student.email,
-//           course_approved: student.course_approved,
-//           courses_type: student.type,
-//           course_rejected: student.course_rejected,
-//           courses_enrolled: "",
-//           courses_links: "",
-//           domain: "",
-//           total_hours: "",
-//           final_hours: 0,
-//           branch: student.branch,
-//           completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
-//           completion_colour: student.course_completed === 1 ? "success" : "danger"
-//         };
-//       }
-      
-//       studentData[key].courses_enrolled += (student.course_name || "N/A") + "<br>";
-//       studentData[key].courses_links += `<a href="${student.links}">${student.links || "No links found"}</a><br>`;
-//       studentData[key].domain += (student.domain || "N/A") + "<br>";
-//       studentData[key].total_hours += (student.total_hours || "N/A") + "<br>";
-//       studentData[key].final_hours += (parseInt(student.total_hours) || 0);
-//     });
-//     const formattedData = Object.values(studentData);
-//     console.log("Formatted Data:", formattedData);
-//     res.json({ result: formattedData });
-//   } catch (err) {
-//     console.error("Error retrieving data:", err);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
 app.post("/getStudentDataOnlineall", async (req, res) => {
   try {
     let query = `
@@ -928,6 +393,111 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
       studentData[key].final_hours += (parseInt(student.total_hours) || 0);
     });
     const formattedData = Object.values(studentData);
+    console.log("Formatted Data:", formattedData);
+    res.json({ result: formattedData });
+  } catch (err) {
+    console.error("Error retrieving data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
+  try {
+    let query = `
+      SELECT
+        u.roll_number AS student_id,
+        u.name AS student_name,
+        u.semester,
+        e.course_id,
+        e.type,
+        e.course_approved,
+        c.course_name,
+        c.domain,
+        e.enrolled_semester,
+        e.course_rejected,
+        e.total_hours,
+        u.branch,
+        u.email,
+        e.id,
+        e.course_completed
+      FROM users u
+      JOIN enrollments e ON u.email = e.email
+      JOIN courses_online c ON e.course_id = c.course_id
+      WHERE 1=1 AND e.course_completed=1 AND u.active=1
+    `;
+
+    const { semester, branch, courseType, apprej } = req.fields;
+
+    if (semester && semester !== "--Select Semester--") {
+      query += ` AND u.semester = '${semester}'`;
+    }
+    if (courseType && courseType !== "--Select Course Type--") {
+      query += ` AND e.type = '${courseType}'`;
+    }
+    if (branch && branch !== "--Select Branch--") {
+      query += ` AND u.branch = '${branch}'`;
+    }
+    if (apprej && apprej === "approval") {
+      query += ` AND e.course_approved = 0`;
+    }
+    if (apprej && apprej === "approved") {
+      query += ` AND e.course_approved = 1`;
+    }
+
+    console.log("Query is =", query);
+
+    const result = await new Promise((resolve, reject) => {
+      con.query(query, function (err, result, fields) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    const studentData = {};
+
+    result.forEach(student => {
+      // Use enrolled_semester instead of semester for the key
+      const key = `${student.email.trim()}_${student.type}_${student.enrolled_semester.trim()}`;
+
+      if (!studentData[key]) {
+        studentData[key] = {
+          id: student.id,
+          student_id: student.student_id,
+          student_name: student.student_name,
+          semester: student.enrolled_semester,
+          email: student.email,
+          course_approved: student.course_approved,
+          courses_type: student.type,
+          course_rejected: student.course_rejected,
+          courses_enrolled: [],
+          courses_links: [],
+          domain: [],
+          total_hours: [],
+          final_hours: 0,
+          branch: student.branch,
+          completion_status: student.course_completed === 1 ? "Completed" : "Not Completed",
+          completion_colour: student.course_completed === 1 ? "success" : "danger"
+        };
+      }
+
+      studentData[key].courses_enrolled.push(student.course_name || "N/A");
+      studentData[key].courses_links.push(student.links || "No links found");
+      studentData[key].domain.push(student.domain || "N/A");
+      studentData[key].total_hours.push(student.total_hours || "N/A");
+      studentData[key].final_hours += (parseInt(student.total_hours) || 0);
+    });
+
+    const formattedData = Object.values(studentData).map(student => ({
+      ...student,
+      courses_enrolled: student.courses_enrolled.join("<br>"),
+      courses_links: student.courses_links.map(link => `<a href="${link}">${link}</a>`).join("<br>"),
+      domain: student.domain.join("<br>"),
+      total_hours: student.total_hours.join("<br>")
+    }));
+
     console.log("Formatted Data:", formattedData);
     res.json({ result: formattedData });
   } catch (err) {
