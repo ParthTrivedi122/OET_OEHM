@@ -201,7 +201,7 @@
                <div class="col col-12">Filters</div>
                <div class="col col-3 ">
                   <label>Semester</label>
-                  <select id="semesterFilter">
+                  <select id="semesterFilter" class="form-select" aria-label="Default select example">
                      <option>--Select Semester--</option>
                      <option>V</option>
                      <option>VI</option>
@@ -226,8 +226,11 @@
                </div>
                
 
-               <div class="col col-3 ">
+               <div class="col col-2 ">
                   <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
+               </div>
+               <div class="col col-1 ">
+                  <button class="btn btn-primary" onclick="resetFilter()">Reset</button>
                </div>
             </div>
             <div class="row">
@@ -465,6 +468,13 @@
          } catch (e) {
             console.log("error is :", e);
          }
+      }
+
+      async function resetFilter(){
+         document.getElementById('semesterFilter').value="--Select Semester--";
+         document.getElementById('courseFilter').value="--Select Course Type--";
+         document.getElementById('branchFilter').value="--Select Branch--";
+         getdata()
       }
 
       async function email(email,semester,type){

@@ -47,53 +47,54 @@
       .approve:active {
          background: #006e58;
       }
+
       .popup {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
+         display: none;
+         position: fixed;
+         z-index: 1000;
+         left: 0;
+         top: 0;
+         width: 100%;
+         height: 100%;
+         overflow: auto;
+         background-color: rgba(0, 0, 0, 0.4);
+      }
 
-.popup-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-}
+      .popup-content {
+         background-color: #fefefe;
+         margin: 15% auto;
+         padding: 20px;
+         border: 1px solid #888;
+         width: 80%;
+         max-width: 500px;
+      }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
+      .close {
+         color: #aaa;
+         float: right;
+         font-size: 28px;
+         font-weight: bold;
+         cursor: pointer;
+      }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-}
+      .close:hover,
+      .close:focus {
+         color: black;
+         text-decoration: none;
+      }
 
-#openGmailBtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
+      #openGmailBtn {
+         background-color: #4CAF50;
+         color: white;
+         padding: 10px 20px;
+         border: none;
+         cursor: pointer;
+         margin-top: 10px;
+      }
 
-#openGmailBtn:hover {
-    background-color: #45a049;
-}
+      #openGmailBtn:hover {
+         background-color: #45a049;
+      }
 
       .reset {
          background-color: rgb(3, 100, 61);
@@ -186,12 +187,13 @@
 
                   </li>
                   <li>
-                     <a href="students_Online_Not_Completed.html"><i class="fas fa-code"></i> <span>Students Online</span> <span
-                           class="menu-arrow"></span></a>
+                     <a href="students_Online_Not_Completed.html"><i class="fas fa-code"></i> <span>Students
+                           Online</span> <span class="menu-arrow"></span></a>
 
                   </li>
                   <li class="">
-                     <a href="student_history.html"><i class="fas fa-chalkboard-teacher"></i> <span> Student History</span>
+                     <a href="student_history.html"><i class="fas fa-chalkboard-teacher"></i> <span> Student
+                           History</span>
                         <span class="menu-arrow"></span></a>
                      <ul>
 
@@ -202,7 +204,7 @@
                            class="menu-arrow"></span></a>
 
                   </li>
-                  
+
 
                </ul>
             </div>
@@ -212,11 +214,43 @@
          <div class="content container-fluid">
             <div class="page-header">
                <div class="row">
-                  <div class="col-sm-10">
+                  <div class="col-sm-7">
                      <h3 class="page-title">Welcome Admin!</h3>
                      <ul class="breadcrumb">
                         <li class="breadcrumb-item active">Dashboard</li>
                      </ul>
+                  </div>
+                  <div class="col col-3">
+                     <label><b>Change Academic year</b></label>
+                     <select class="form-control" id="academic_year" name="academic_year" onchange="changeAcademicYear()">
+                        <option value="2024-2025">2024-2025</option>
+                        <option value="2025-2026">2025-2026</option>
+                        <option value="2026-2027">2026-2027</option>
+                        <option value="2027-2028">2027-2028</option>
+                        <option value="2028-2029">2028-2029</option>
+                        <option value="2029-2030">2029-2030</option>
+                        <option value="2030-2031">2030-2031</option>
+                        <option value="2031-2032">2031-2032</option>
+                        <option value="2032-2033">2032-2033</option>
+                        <option value="2033-2034">2033-2034</option>
+                        <option value="2034-2035">2034-2035</option>
+                        <option value="2035-2036">2035-2036</option>
+                        <option value="2036-2037">2036-2037</option>
+                        <option value="2037-2038">2037-2038</option>
+                        <option value="2038-2039">2038-2039</option>
+                        <option value="2039-2040">2039-2040</option>
+                        <option value="2040-2041">2040-2041</option>
+                        <option value="2041-2042">2041-2042</option>
+                        <option value="2042-2043">2042-2043</option>
+                        <option value="2043-2044">2043-2044</option>
+                        <option value="2044-2045">2044-2045</option>
+                        <option value="2045-2046">2045-2046</option>
+                        <option value="2046-2047">2046-2047</option>
+                        <option value="2047-2048">2047-2048</option>
+                        <option value="2048-2049">2048-2049</option>
+                        <option value="2049-2050">2049-2050</option>
+
+                     </select>
                   </div>
                   <div class="col-sm-2">
                      <button type="button " class="button reset" onclick="restSem()">
@@ -356,8 +390,8 @@
                <div class="col col-8">
                   <h3>Approvals/Rejected Student</h3>
                </div>
-               </div>
-               
+            </div>
+
             <div class="row">
                <div class="col-sm-12">
                   <div class="card card-table">
@@ -397,14 +431,14 @@
       </div>
       <div id="emailPopup" class="popup" style="display:none;">
          <div class="popup-content">
-             <span class="close">&times;</span>
-             <h2>Send Rejection Email</h2>
-             <p><strong>To:</strong> <span id="popupEmail"></span></p>
-             <p><strong>Subject:</strong> <span id="popupSubject"></span></p>
-             <p><strong>Message:</strong> <span id="popupBody"></span></p>
-             <button id="openGmailBtn">Open in Gmail</button>
+            <span class="close">&times;</span>
+            <h2>Send Rejection Email</h2>
+            <p><strong>To:</strong> <span id="popupEmail"></span></p>
+            <p><strong>Subject:</strong> <span id="popupSubject"></span></p>
+            <p><strong>Message:</strong> <span id="popupBody"></span></p>
+            <button id="openGmailBtn">Open in Gmail</button>
          </div>
-     </div>
+      </div>
       <div class="row">
 
       </div>
@@ -417,9 +451,9 @@
    <script>
       async function getdata(choice) {
          var tbody = '';
-         var semester="--Select Semester--";
-         if(choice==1){
-         var apprej = "approval";
+         var semester = "--Select Semester--";
+         if (choice == 1) {
+            var apprej = "approval";
          }
          var type = "--Select Course Type--";
          var branch = "--Select Branch--";
@@ -429,7 +463,7 @@
             data = await axios({
                url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
-               data: {  courseType: type, branch: branch ,apprej:"approval"}
+               data: { courseType: type, branch: branch, apprej: "approval" }
             });
             console.log(data.data.result);
             //   console.log(data.data.result[0].domain);
@@ -439,12 +473,13 @@
             var certificates = data.data.certificates;
             var hours = 0;
             var t; // to check for approval and rejected
-            
+
             if (data) {
                for (let i = 0; i < list.length; i++) {
-
+                  document.getElementById("academic_year").value=list[0].year;
+                  console.log(list[0].year);
                   console.log(list[i].courses_enrolled);
-                  if (list[i].course_approved == 0 && list[i].course_rejected==0) {
+                  if (list[i].course_approved == 0 && list[i].course_rejected == 0) {
                      tbody = tbody + `<tr>
                                        <td>${list[i].student_id}</td>
                                        <td>
@@ -478,8 +513,8 @@
                                     `;
 
                   } else {
-                     if(list.length==0){
-                     tbody = "NO Request"
+                     if (list.length == 0) {
+                        tbody = "NO Request"
                      }
                   }
                }
@@ -493,97 +528,121 @@
 
       getdata();
 
-      async function restSem(){
+      async function setYear(){
+         var year = await axios({
+            url:"http://localhost:8000/getYear",
+            method:"post",
+
+         })
+         response=year.data.result;
+         document.getElementById("academic_year").value=response;
+
+      }
+      setYear()
+
+      async function restSem() {
          try {
-            var data=await axios({
-               "url":"http://localhost:8000/resetSem",
-               "method":"POST",
+            var data = await axios({
+               "url": "http://localhost:8000/resetSem",
+               "method": "POST",
             })
-            if(data.data.result==1){
+            if (data.data.result == 1) {
                alert("Semester Reset")
             }
-         }catch(e){
+         } catch (e) {
             console.log("error is:", e);
          }
       }
 
       function showRejectionPopup(id, email, semester, type) {
-    let subject = type.toLowerCase().includes('oet') ? 'Your OET is Rejected' : 'Your OEHM is Rejected';
-    let body = 'Kindly refill the data.';
-    
-    document.getElementById('popupEmail').textContent = email;
-    document.getElementById('popupSubject').textContent = subject;
-    document.getElementById('popupBody').value = body;
-    
-    
-        sendRejectionEmail(id, email, subject, document.getElementById('popupBody').value);
-    
-    
-    //document.getElementById('emailPopup').style.display = "block";
-}
+         let subject = type.toLowerCase().includes('oet') ? 'Your OET is Rejected' : 'Your OEHM is Rejected';
+         let body = 'Kindly refill the data.';
 
-async function sendRejectionEmail(id, email, subject, body) {
-    try {
-        const response = await axios.post('http://localhost:8000/sendRejectionEmail', {
-            id: id,
-            email: email,
-            subject: subject,
-            body: body
-        });
-        
-        if (response.data.success) {
-            alert('Email sent successfully');
-            document.getElementById('emailPopup').style.display = "none";
-        } else {
-            alert('Failed to send email');
-        }
-    } catch (error) {
-        console.error('Error sending email:', error);
-        alert('An error occurred while sending the email');
-    }
-}
+         document.getElementById('popupEmail').textContent = email;
+         document.getElementById('popupSubject').textContent = subject;
+         document.getElementById('popupBody').value = body;
 
 
-      async function approve(approve, id, email,semester,type) {
+         sendRejectionEmail(id, email, subject, document.getElementById('popupBody').value);
+
+
+         //document.getElementById('emailPopup').style.display = "block";
+      }
+
+      async function sendRejectionEmail(id, email, subject, body) {
+         try {
+            const response = await axios.post('http://localhost:8000/sendRejectionEmail', {
+               id: id,
+               email: email,
+               subject: subject,
+               body: body
+            });
+
+            if (response.data.success) {
+               alert('Email sent successfully');
+               document.getElementById('emailPopup').style.display = "none";
+            } else {
+               alert('Failed to send email');
+            }
+         } catch (error) {
+            console.error('Error sending email:', error);
+            alert('An error occurred while sending the email');
+         }
+      }
+
+
+      async function approve(approve, id, email, semester, type) {
          console.log("jello");
          if (approve === 0) {
-        
+
             showRejectionPopup(id, email, semester, type);
-         
-        // Proceed with the rejection process on the server
-       
-         console.log("hello")
-         console.log(approve, id, email,semester,type);
-         try {
-            var response = await axios({
-               url: "http://localhost:8000/webhook/trigger-reonboarding",
-               method: "post",
-               data: { approve: approve, id: id, userEmail: email,semester:semester,type:type }
-            });
-            console.log(response.data.result);
-            //var list = response.data.data;
-            if(response.data.result){
-             getdata()
+
+            // Proceed with the rejection process on the server
+
+            console.log("hello")
+            console.log(approve, id, email, semester, type);
+            try {
+               var response = await axios({
+                  url: "http://localhost:8000/webhook/trigger-reonboarding",
+                  method: "post",
+                  data: { approve: approve, id: id, userEmail: email, semester: semester, type: type }
+               });
+               console.log(response.data.result);
+               //var list = response.data.data;
+               if (response.data.result) {
+                  getdata()
+               }
+            } catch (e) {
+               console.log("error is:", e);
             }
-         } catch (e) {
-            console.log("error is:", e);
-         }
-      }else{
-         var response = await axios({
+         } else {
+            var response = await axios({
                url: "http://localhost:8000/approve",
                method: "post",
-               data: { approve: approve, id: id, email: email,semester:semester,type:type }
+               data: { approve: approve, id: id, email: email, semester: semester, type: type }
             });
-            console.log("approve",response.data.result)
-            if(response.data.result==1){
+            console.log("approve", response.data.result)
+            if (response.data.result == 1) {
                getdata()
-            }else{
+            } else {
                alert("Error")
             }
+         }
       }
-      }
-   
 
+      async function changeAcademicYear(){
+         var year=document.getElementById("academic_year").value;
+         var response = await axios({
+            url: "http://localhost:8000/changeAcademicYear",
+            method: "post",
+            data: { year: year }
+         });
+         console.log("approve", response.data.result);
+         if (response.data.result == 1) {
+            alert("Academic Year change")
+         }
+         
+      }
    </script>
    <script src="assets/js/jquery-3.6.0.min.js"></script>
    <script src="assets/js/popper.min.js"></script>

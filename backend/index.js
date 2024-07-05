@@ -329,6 +329,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
         e.course_rejected,
         e.total_hours,
         u.branch,
+        u.academic_year,
         u.email,
         e.id,
         e.course_completed
@@ -372,6 +373,7 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
           student_name: student.student_name,
           semester: student.semester,
           email: student.email,
+          year:student.academic_year,
           course_approved: student.course_approved,
           courses_type: student.type,
           course_rejected: student.course_rejected,
@@ -402,6 +404,28 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
 });
 
 
+app.post("/getYear",async(req,res)=>{
+  try {
+    query="select academic_year from users limit 1";
+    con.query(query, function(err,result,fields){
+      if(err) throw err;
+      console.log(result[0].academic_year);
+      res.json({result:result[0].academic_year});
+    })
+  }catch(e){
+    console.log(e);
+  }
+})
+
+app.post("/changeAcademicYear",async(req,res)=>{
+  const {year} = req.fields;
+  const query = `UPDATE users SET academic_year = "${year}" WHERE   1`;
+  con.query(query, function (err, result, fields) {
+    if (err) throw err;
+    console.log("Academic Year Changed");
+    res.json({result:1})
+  })
+})
 
 
 app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
@@ -518,7 +542,7 @@ app.post("/resetSem",async (req,res)=>{
 const axios = require('axios');
 const crypto = require('crypto');
 
-const WEBHOOK_URL = 'https://oet-oehm-ingvj2pida-el.a.run.app//webhook/trigger-reonboarding';
+const WEBHOOK_URL = 'https://oet-oehm-ingvj2pida-el.a.run.app/webhook/trigger-reonboarding';
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "SM3MvcSjjBKySAPStk8rWarMhcazQ6cT"; // Same secret as in the student system
 
 async function triggerReonboarding(userEmail) {
@@ -566,16 +590,24 @@ app.post("/completeStudentDataOnline",async (req,res)=>{
 })
 
 app.post("/webhook/trigger-reonboarding",async (req,res)=>{
+
   console.log(req.fields.email);
-  const { userEmail } = req.fields;
+  userEmail = req.fields.userEmail;
+  // console.log(req.firlds)
+  const query=`UPDATE enrollments SET course_rejected=1 WHERE email="${req.fields.userEmail}" and enrolled_semester="${req.fields.semester}" and type="${req.fields.type}"`
+  console.log("query is ",query)
+  con.query(query,async function(err,result,fields) {
+    if (err) throw err;
+    res.json({result:true})
+  });
   console.log(userEmail)
-  try {
-    const result = await triggerReonboarding(userEmail);
-    console.log(result)
-    res.json({"result":result.success});
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to trigger re-onboarding' });
-  }
+  // try {
+  //   const result = await triggerReonboarding(userEmail);
+  //   console.log(result)
+  //   res.json({"result":result.success});
+  // } catch (error) {
+  //   res.status(500).json({ error: 'Failed to trigger re-onboarding' });
+  // }
 })
 
 
