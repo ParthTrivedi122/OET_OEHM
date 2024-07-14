@@ -426,7 +426,59 @@ app.post("/changeAcademicYear",async(req,res)=>{
     res.json({result:1})
   })
 })
+app.post("/getStudentDataOfflineAll", async (req, res) => {
+  try {
+    let query = `
+      SELECT
+        e.id,
+        u.email,
+        e.course_id,
+        e.course_approved,
+        'offline' AS mode,
+        e.type,
+        e.enrolled_semester,
+        e.enrolled_academic_year
+      FROM users u
+      JOIN enrollments_offline e ON u.email = e.email
+      JOIN courses_offline c ON e.course_id = c.course_id
+      WHERE u.active = 1 AND e.course_completed = 0
+    `;
 
+    const { semester, branch, courseType, apprej } = req.fields;
+
+    if (semester && semester !== "--Select Semester--") {
+      query += ` AND e.enrolled_semester = '${semester}'`;
+    }
+
+    if (courseType && courseType !== "--Select Course Type--") {
+      query += ` AND e.type = '${courseType}'`;
+    }
+
+    if (branch && branch !== "--Select Branch--") {
+      query += ` AND u.branch = '${branch}'`;
+    }
+
+    if (apprej === "approval") {
+      query += ` AND e.course_approved = 0`;
+    } else if (apprej === "approved") {
+      query += ` AND e.course_approved = 1`;
+    }
+
+    console.log("Query is =", query);
+
+    const result = await new Promise((resolve, reject) => {
+      con.query(query, function (err, result, fields) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error in getStudentDataOfflineAll:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
   try {

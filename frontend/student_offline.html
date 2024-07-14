@@ -56,7 +56,7 @@
                   </div>
                   <div class="noti-content">
                      <ul class="notification-list">
-                        <li class="notification-message">
+                        <!-- <li class="notification-message">
                            <a href="#">
                               <div class="media">
                                  <span class="avatar avatar-sm">
@@ -71,8 +71,8 @@
                                  </div>
                               </div>
                            </a>
-                        </li>
-                        <li class="notification-message">
+                        </li> -->
+                        <!-- <li class="notification-message">
                            <a href="#">
                               <div class="media">
                                  <span class="avatar avatar-sm">
@@ -116,7 +116,7 @@
                                  </div>
                               </div>
                            </a>
-                        </li>
+                        </li> -->
                      </ul>
                   </div>
                   <div class="topnav-dropdown-footer">
@@ -228,6 +228,9 @@
 
                <div class="col col-3 ">
                   <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
+               </div>
+               <div class="col col-1 ">
+                  <button class="btn btn-primary" onclick="resetFilter()">Reset</button>
                </div>
             </div>
             <div class="row">
@@ -401,7 +404,7 @@
 
          try {
             data = await axios({
-               url: "http://localhost:8000/getStudentDataOnlineall",
+               url: "http://localhost:8000/getStudentDataOfflineAll",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
@@ -552,7 +555,7 @@ async function sendRejectionEmail(email, subject, body) {
       async function complete(id,email,semester,type){
          console.log(id,email,semester,type);
          var complete = await axios({
-            url: `http://localhost:8000/completeStudentDataOnline`,
+            url: `http://localhost:8000/getStudentDataOfflineAll`,
             method: "post",
             data: { id: id, email: email, semester: semester, type: type }
             });
