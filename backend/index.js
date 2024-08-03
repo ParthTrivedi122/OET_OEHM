@@ -4,11 +4,10 @@ const cors = require('cors');
 const mysql = require('mysql');
 const formidable = require('express-formidable');
 const nodemailer = require('nodemailer');
-// const session = require("express-session");
-// const Login=require("./schema/registeredSchema");
-// const Customer=require("./schema/customerSchema");
-// const product=require('./schema/productSchema');
-// const multer  = require('multer');
+app.set('view engine', 'ejs');
+const path = require('path');
+ const session = require("express-session");
+
 
 const PORT=8000;
 
@@ -36,6 +35,13 @@ var con = mysql.createConnection({
     password: "diHgof-5pejqu-taxkuq"
   });
 
+  app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+  }))
+
 // const dbConfig = {
 //   host: process.env.DB_HOST,
 //   port: process.env.DB_PORT,
@@ -45,7 +51,7 @@ var con = mysql.createConnection({
 // };
 
 // const con = mysql.createPool({ ...dbConfig });
-
+app.use(express.static(path.join(__dirname, 'assets')));
 
 app.post("/getdata",async(req,res)=>{
    
@@ -65,9 +71,66 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
       user: 'parthtrivedi690@gmail.com',
-      pass: 'ojfv kdyc hdqs wpqa'
-  }
+      pass: 'ojfv kdyc hdqs  wpqa'
+  },
+  tls: {
+    rejectUnauthorized: false
+}
 });
+
+app.get("/home",async(req,res)=>{
+  if(req.session.login==1){
+    res.render("home.ejs")
+  }else{
+    res.render("login.ejs")
+  }
+})
+
+app.get("/history",async(req,res)=>{
+  if(req.session.login==1){
+    res.render("student_history.ejs")
+  }else{
+    res.render("login.ejs")
+  }
+})
+
+app.get("/online",async(req,res)=>{
+  if(req.session.login==1){
+    res.render("student_online.ejs")
+  }else{
+    res.render("login.ejs")
+  }
+})
+
+app.get("/offline",async(req,res)=>{
+  if(req.session.login==1){
+    res.render("student_offline.ejs")
+  }else{
+    res.render("login.ejs")
+  }
+})
+
+app.get("/login",async(req,res)=>{
+  res.render("login.ejs")
+})
+
+app.post("/login", async(req,res)=>{
+  const {email, password} = req.fields;
+  console.log(email,password);
+  if(email=="Admin@admin.com" && password=="Admin1290"){
+    req.session.login=1;
+    console.log("login=>",req.session.login)
+    res.json({"msg":1})
+  }
+  else{
+    res.json({"msg":0})
+  }
+})
+
+app.post("/logout",async(req,res)=>{
+  req.session.login=0;
+  res.json({"msg":1})
+})
 
 app.post('/sendCourseLinkRejectEmail', async (req, res) => {
   const {  email, subject, body } = req.fields;
@@ -81,6 +144,7 @@ app.post('/sendCourseLinkRejectEmail', async (req, res) => {
 
   try {
       await transporter.sendMail(mailOptions);
+      
       // Here you might want to update your database to mark the application as rejected
       res.json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
@@ -326,12 +390,10 @@ app.post("/getStudentDataOnlineall", async (req, res) => {
         e.course_approved,
         c.course_name,
         c.domain,
-        e.course_rejected,
         e.total_hours,
         u.branch,
         u.academic_year,
         u.email,
-        e.id,
         e.course_completed
       FROM users u
       JOIN enrollments e ON u.email = e.email
@@ -433,14 +495,19 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
         e.id,
         u.email,
         e.course_id,
+        u.name as student_name,
+        u.roll_number,
+        u.branch,
+        c.course_name,
+        c.faculty_name,
+        c.faculty_email,
         e.course_approved,
-        'offline' AS mode,
         e.type,
         e.enrolled_semester,
         e.enrolled_academic_year
       FROM users u
-      JOIN enrollments_offline e ON u.email = e.email
-      JOIN courses_offline c ON e.course_id = c.course_id
+      JOIN enrollments e ON u.email = e.email
+      JOIN courses_offline c ON e.course_id = c.course_code
       WHERE u.active = 1 AND e.course_completed = 0
     `;
 
@@ -465,10 +532,11 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
     }
 
     console.log("Query is =", query);
-
+    
     const result = await new Promise((resolve, reject) => {
       con.query(query, function (err, result, fields) {
         if (err) reject(err);
+        console.log(result);
         resolve(result);
       });
     });
@@ -594,7 +662,7 @@ app.post("/resetSem",async (req,res)=>{
 const axios = require('axios');
 const crypto = require('crypto');
 
-const WEBHOOK_URL = 'https://oet-oehm-ingvj2pida-el.a.run.app/webhook/trigger-reonboarding';
+const WEBHOOK_URL = 'https://oet-oehm-preprod-ingvj2pida-el.a.run.app/webhook/trigger-reonboarding';
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "SM3MvcSjjBKySAPStk8rWarMhcazQ6cT"; // Same secret as in the student system
 
 async function triggerReonboarding(userEmail) {
@@ -612,7 +680,8 @@ async function triggerReonboarding(userEmail) {
         'X-Webhook-Signature': signature
       }
     });
-
+    console.log("response");
+    console.log("Response : ",response.data)
     return response.data;
   } catch (error) {
     console.error('Error triggering re-onboarding:', error);
@@ -646,20 +715,20 @@ app.post("/webhook/trigger-reonboarding",async (req,res)=>{
   console.log(req.fields.email);
   userEmail = req.fields.userEmail;
   // console.log(req.firlds)
-  const query=`UPDATE enrollments SET course_rejected=1 WHERE email="${req.fields.userEmail}" and enrolled_semester="${req.fields.semester}" and type="${req.fields.type}"`
-  console.log("query is ",query)
-  con.query(query,async function(err,result,fields) {
-    if (err) throw err;
-    res.json({result:true})
-  });
-  console.log(userEmail)
-  // try {
-  //   const result = await triggerReonboarding(userEmail);
-  //   console.log(result)
-  //   res.json({"result":result.success});
-  // } catch (error) {
-  //   res.status(500).json({ error: 'Failed to trigger re-onboarding' });
-  // }
+  // const query=`UPDATE enrollments SET course_rejected=1 WHERE email="${req.fields.userEmail}" and enrolled_semester="${req.fields.semester}" and type="${req.fields.type}"`
+  // console.log("query is ",query)
+  // con.query(query,async function(err,result,fields) {
+  //   if (err) throw err;
+  //   res.json({result:true})
+  // });
+  // console.log(userEmail)
+  try {
+    const result = await triggerReonboarding(userEmail);
+    console.log(result)
+    res.json({"result":result.success});
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to trigger re-onboarding' });
+  }
 })
 
 

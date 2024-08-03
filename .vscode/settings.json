@@ -15,5 +15,8 @@
             "password": "diHgof-5pejqu-taxkuq",
             "name": "KJSCE"
         }
-    ]
+    ],
+    "files.associations": {
+        "8. Matrix-transpose.C": "cpp"
+    }
 }

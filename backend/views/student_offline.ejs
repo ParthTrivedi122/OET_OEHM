@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:43 GMT -->
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+   <title>Preskool - Students</title>
+   <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+
+   <link rel="shortcut icon" href="/img/favicon.png">
+   <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
+   <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+   <link rel="stylesheet" href="/plugins/fontawesome/css/fontawesome.min.css">
+   <link rel="stylesheet" href="/plugins/fontawesome/css/all.min.css">
+   <link rel="stylesheet" href="/plugins/datatables/datatables.min.css">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.js"></script>
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="icon" href="/img/logo-small.png" type="image/x-icon">
+   <link rel="shortcut icon" href="/img/logo-small.png" type="image/x-icon">
+</head>
+
+<body>
+   <div class="main-wrapper">
+      <div class="header">
+         <div class="header-left">
+            <a href="index.html" class="logo">
+               <img src="/img/logo.svg" alt="Logo">
+            </a>
+            <a href="index.html" class="logo logo-small">
+               <img src="/img/logo-small.svg" alt="Logo" width="30" height="45">
+            </a>
+         </div>
+         <a href="javascript:void(0);" id="toggle_btn">
+            <i class="fas fa-align-left"></i>
+         </a>
+         <div class="top-nav-search">
+            <form>
+               <input type="text" class="form-control" placeholder="Search here">
+               <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+         </div>
+         <a class="mobile_btn" id="mobile_btn">
+            <i class="fas fa-bars"></i>
+         </a>
+         <ul class="nav user-menu">
+            <li class="nav-item dropdown noti-dropdown">
+               <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                  <i class="far fa-bell"></i> <span class="badge badge-pill">3</span>
+               </a>
+               <div class="dropdown-menu notifications">
+                  <div class="topnav-dropdown-header">
+                     <span class="notification-title">Notifications</span>
+                     <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                  </div>
+                  <div class="noti-content">
+                     <ul class="notification-list">
+                        <!-- <li class="notification-message">
+                           <a href="#">
+                              <div class="media">
+                                 <span class="avatar avatar-sm">
+                                    <img class="avatar-img rounded-circle" alt="User Image"
+                                       src="/img/profiles/avatar-02.jpg">
+                                 </span>
+                                 <div class="media-body">
+                                    <p class="noti-details"><span class="noti-title">Carlson Tech</span> has approved
+                                       <span class="noti-title">your estimate</span>
+                                    </p>
+                                    <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
+                                 </div>
+                              </div>
+                           </a>
+                        </li> -->
+                        <!-- <li class="notification-message">
+                           <a href="#">
+                              <div class="media">
+                                 <span class="avatar avatar-sm">
+                                    <img class="avatar-img rounded-circle" alt="User Image"
+                                       src="/img/profiles/avatar-11.jpg">
+                                 </span>
+                                 <div class="media-body">
+                                    <p class="noti-details"><span class="noti-title">International Software Inc</span>
+                                       has sent you a invoice in the amount of <span class="noti-title">$218</span></p>
+                                    <p class="noti-time"><span class="notification-time">6 mins ago</span></p>
+                                 </div>
+                              </div>
+                           </a>
+                        </li>
+                        <li class="notification-message">
+                           <a href="#">
+                              <div class="media">
+                                 <span class="avatar avatar-sm">
+                                    <img class="avatar-img rounded-circle" alt="User Image"
+                                       src="/img/profiles/avatar-17.jpg">
+                                 </span>
+                                 <div class="media-body">
+                                    <p class="noti-details"><span class="noti-title">John Hendry</span> sent a
+                                       cancellation request <span class="noti-title">Apple iPhone XR</span></p>
+                                    <p class="noti-time"><span class="notification-time">8 mins ago</span></p>
+                                 </div>
+                              </div>
+                           </a>
+                        </li>
+                        <li class="notification-message">
+                           <a href="#">
+                              <div class="media">
+                                 <span class="avatar avatar-sm">
+                                    <img class="avatar-img rounded-circle" alt="User Image"
+                                       src="/img/profiles/avatar-13.jpg">
+                                 </span>
+                                 <div class="media-body">
+                                    <p class="noti-details"><span class="noti-title">Mercury Software Inc</span> added a
+                                       new product <span class="noti-title">Apple MacBook Pro</span></p>
+                                    <p class="noti-time"><span class="notification-time">12 mins ago</span></p>
+                                 </div>
+                              </div>
+                           </a>
+                        </li> -->
+                     </ul>
+                  </div>
+                  <div class="topnav-dropdown-footer">
+                     <a href="#">View all Notifications</a>
+                  </div>
+               </div>
+            </li>
+            <li class="nav-item dropdown has-arrow">
+               <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                  <span class="user-img"><img class="rounded-circle" src="/img/profiles/avatar-01.png" width="31"
+                        alt="Ryan Taylor"></span>
+               </a>
+               <div class="dropdown-menu">
+                  <div class="user-header">
+                     <div class="avatar avatar-sm">
+                        <img src="/img/profiles/avatar-01.png" alt="User Image" class="avatar-img rounded-circle">
+                     </div>
+                     <div class="user-text">
+                        <h6>Ryan Taylor</h6>
+                        <p class="text-muted mb-0">Administrator</p>
+                     </div>
+                  </div>
+                  <a class="dropdown-item" href="profile.html">My Profile</a>
+                  <a class="dropdown-item" href="inbox.html">Inbox</a>
+                  <a class="dropdown-item" href="login.html">Logout</a>
+               </div>
+            </li>
+         </ul>
+      </div>
+      <div class="sidebar" id="sidebar">
+         <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+               <ul>
+
+
+                  <li >
+                     <a href="http://localhost:8000/home"><i class="fas fa-user-graduate"></i> <span> Dashboard</span><span
+                           class="menu-arrow"></span></a>
+
+                  </li >
+                  <li class="">
+                     <a href="http://localhost:8000/online"><i class="fas fa-code"></i> <span>Students Online</span> <span
+                           class="menu-arrow"></span></a>
+
+                  </li>
+                  <li class="">
+                     <a href="http://localhost:8000/history"><i class="fas fa-chalkboard-teacher"></i> <span> Student History</span>
+                        <span class="menu-arrow"></span></a>
+                     <ul>
+
+                     </ul>
+                  </li>
+                  <li class="active">
+                     <a href="http://localhost:8000/offline"><i class="fas fa-building"></i> <span> Students Offline</span> <span
+                           class="menu-arrow"></span></a>
+
+                  </li>
+                  
+
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="editModalLabel">Edit Student Information</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div class="modal-body">
+               <form id="editForm">
+                 <input type="hidden" id="editId">
+                 <div class="form-group">
+                   <label for="editName">Name</label>
+                   <input type="text" class="form-control" id="editName">
+                 </div>
+                 <div class="form-group">
+                   <label for="editSemester">Semester</label>
+                   <input type="text" class="form-control" id="editSemester">
+                 </div>
+                 <div class="form-group">
+                  <label for="editSemester">Roll No</label>
+                  <input type="text" class="form-control" id="editRollNumber">
+                </div>
+                 <div class="form-group">
+                   <label for="editBranch">Branch</label>
+                   <input type="text" class="form-control" id="editBranch">
+                 </div>
+                 <div class="form-group">
+                   <label for="editEmail">Email</label>
+                   <input type="email" class="form-control" id="editEmail">
+                 </div>
+                 <div class="form-group">
+                   <label for="editType">Course Type</label>
+                   <input type="text" class="form-control" id="editType">
+                 </div>
+                 <div class="form-group">
+                   <label for="editCourseName">Course Name</label>
+                   <input type="text" class="form-control" id="editCourseName">
+                 </div>
+                 <div class="form-group">
+                  <label for="editCourseName">Academic Year</label>
+                  <input type="text" class="form-control" id="editAcademicYear">
+                </div>
+               </form>
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary" onclick="updateStudent()">Save changes</button>
+             </div>
+           </div>
+         </div>
+       </div>
+      <div class="page-wrapper">
+         <div class="content container-fluid">
+            <div class="page-header">
+               <div class="row align-items-center">
+                  <div class="col">
+                     <h3 class="page-title">Students</h3>
+                     <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="admin.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Students</li>
+                     </ul>
+                  </div>
+                  <div class="col-auto text-right float-right ml-auto">
+                     <a href="#" class="btn btn-outline-primary mr-2" style="background-color: red;color: white;"
+                        onclick="downloadExcel()"><i class="fas fa-download"></i> Download</a>
+                  </div>
+               </div>
+            </div>
+            <div class="row" style="margin-bottom: 20px;">
+               <div class="col col-12">Filters</div>
+               <div class="col col-3 ">
+                  <label>Semester</label>
+                  <select id="semesterFilter"  class="form-select" aria-label="Default select example">
+                     <option>--Select Semester--</option>
+                     <option>V</option>
+                     <option>VI</option>
+                     <option>VII</option>
+                  </select>
+               </div>
+               <div class="col col-3 ">
+                  <label>Course Type</label>
+                  <select id="courseFilter"  class="form-select" aria-label="Default select example">
+                     <option>--Select Course Type--</option>
+                     <option>OEHM</option>
+                     <option>OET</option>
+                  </select>
+               </div>
+               <div class="col col-2 ">
+                  <label>Branch</label>
+                  <select id="branchFilter"  class="form-select" aria-label="Default select example">
+                     <option>--Select Branch--</option>
+                     <option>IT</option>
+                     <option>COMPS</option>
+                  </select>
+               </div>
+               
+
+               <div class="col col-3 ">
+                  <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
+               </div>
+               <div class="col col-1 ">
+                  <button class="btn btn-primary" onclick="resetFilter()">Reset</button>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="card card-table">
+                     <div class="card-body">
+                        <div class="table-responsive">
+                           <table class="table table-hover table-center mb-0 datatable" id="data-table">
+                              <thead>
+                                 <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Semester</th>
+                                    <th>Branch</th>
+                                    <th>Domain</th>
+                                    <th>Course Type</th>
+                                    <th>Courses Enrolled</th>
+                                    <th>Certificates Links</th>
+                                    <th> Hours</th>
+                                    <th>Total Hours</th>
+                                    <th>Completion Status</th>
+                                    <th class="text-right">Action</th>
+                                 </tr>
+                              </thead>
+                              <tbody id="tbody">
+
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <footer>
+            <p>Copyright © 2020 Dreamguys.</p>
+         </footer>
+      </div>
+   </div>
+
+   <div class="modals fade" id="exampleModals" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+
+
+
+
+
+   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Do you really want to Delete</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+               <button type="button" class="btn btn-primary" onclick="deletePermission()"
+                  data-dismiss="modal">Yes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   <script src="/js/jquery-3.6.0.min.js"></script>
+   <script src="/js/popper.min.js"></script>
+   <script src="/plugins/bootstrap/js/bootstrap.min.js"></script>
+   <script src="/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+   <!-- <script src="/plugins/datatables/datatables.min.js"></script> -->
+   <script src="/js/script.js"></script>
+   <script>
+      getdata();
+      function downloadExcel() {
+
+         // Create a new workbook
+         const workbook = new ExcelJS.Workbook();
+         const worksheet = workbook.addWorksheet('Sheet 1');
+
+         // Define table headers
+         const headers = [
+            'ID',
+            'Name',
+            'Semester',
+            'Branch',
+            'Domain',
+            'Course Type',
+            'Courses Enrolled',
+            'Courses Type',
+            'Hours',
+            'Final Hours',
+            
+            'Completion Status'
+         ];
+
+         // Add headers to the worksheet
+         worksheet.addRow(headers);
+
+         // Fetch table data
+         const tableRows = document.querySelectorAll('#data-table tbody tr');
+
+         // Iterate over table rows and add data to the worksheet
+         tableRows.forEach(row => {
+            const rowData = [];
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+               rowData.push(cell.textContent.trim());
+            });
+            worksheet.addRow(rowData);
+         });
+
+         // Generate Excel file
+         workbook.xlsx.writeBuffer()
+            .then(buffer => {
+               // Convert buffer to Blob
+               const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+               // Create download link
+               const url = window.URL.createObjectURL(blob);
+               const a = document.createElement('a');
+               a.href = url;
+               a.download = 'table_data.xlsx';
+
+               // Append link to the body and trigger download
+               document.body.appendChild(a);
+               a.click();
+
+               // Cleanup
+               window.URL.revokeObjectURL(url);
+               document.body.removeChild(a);
+            })
+            .catch(error => {
+               console.error('Error generating Excel file:', error);
+            });
+      }
+
+      window.addEventListener('pageshow', function (event) {
+         if (event.persisted) {
+            location.reload();
+         }
+      });
+
+      var semester = document.getElementById('semesterFilter').value;
+      var type = document.getElementById('courseFilter').value;
+      var branch = document.getElementById('branchFilter').value;
+
+
+      async function getdata() {
+         var tbody = '';
+         var semester = document.getElementById('semesterFilter').value;
+         var type = document.getElementById('courseFilter').value;
+         var branch = document.getElementById('branchFilter').value;
+         var data;
+
+         try {
+            data = await axios({
+               url: "http://localhost:8000/getStudentDataOfflineAll",
+               method: "post",
+               data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
+            });
+            console.log(data.data);
+            // console.log(data.data.result[0].domain);
+            //console.log(data.data.certificates);
+            var list = data.data;
+            //var course = data.data.course;
+            // list.forEach(student => {
+            //    // Concatenate domains
+            //    domain += student.domain.join(", ") + "<br>";
+
+            //    // Concatenate enrolled courses
+            //    enrolled += student.courses_enrolled.join("<br>") + "<br>";
+
+            //    // Concatenate total hours
+            //    hours += student.total_hours.join("<br>") + "<br>";
+
+            //    // Concatenate certificates
+            //    certificates += student.courses_links.join("<br>") + "<br>";
+            // });
+
+            // console.log("Domains:", domain);
+            // console.log("Enrolled Courses:", enrolled);
+            // console.log("Total Hours:", hours);
+            // console.log("Certificates:", certificates);
+            if (data) {
+               for (let i = 0; i < list.length; i++) {
+                  console.log(list[i].course_name);
+                  if (list[i].course_approved == 1) {
+                     tbody = tbody + `<tr>
+                                       <td>${list[i].roll_number}</td>
+                                       <td>
+                                         
+                                            ${list[i].student_name}
+                                          
+                                       </td>
+                                       <td id="sem">${list[i].enrolled_semester}</td>
+                                       <td>${list[i].branch}</td>
+
+                                       <td>${list[i].email}</td>
+                                       <td id="types">${list[i].type}</td>
+                                       <td>${list[i].course_name}</td>
+                                          <td>${list[i].faculty_name}</td>
+                                       <td>${list[i].faculty_email}</td>
+                                       <td>${list[i].enrolled_academic_year}</td>
+                                       <td class="text-right">
+                                          <button type="button" class="btn btn-primary btn-sm" onclick="editStudent('${list[i].roll_number}', '${list[i].student_name}', '${list[i].enrolled_semester}', '${list[i].branch}', '${list[i].email}', '${list[i].type}', '${list[i].course_name}', '${list[i].faculty_name}', '${list[i].faculty_email}', '${list[i].enrolled_academic_year}')">
+                                             <i class="fas fa-edit"></i> Edit
+                                          </button>
+                                          <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('${list[i].roll_number}')">
+                                             <i class="fas fa-trash"></i> Delete
+                                          </button>
+                                       </td>
+                                    </tr>
+                                    `;
+                  }
+               }
+               document.getElementById('tbody').innerHTML = tbody;
+            }
+         } catch (e) {
+            console.log("error is :", e);
+         }
+      }
+
+      async function email(email,semester,type){
+         console.log(email);
+         showRejectionPopup( email, semester, type)
+      }
+
+      function getCheckedStudentNames() {
+    const checkboxes = document.querySelectorAll('.checkbox:checked');
+    let names = [];
+    checkboxes.forEach((checkbox) => {
+        names.push(checkbox.getAttribute('value'));
+    });
+    return names;
+}
+//console.log(getCheckedStudentNames());
+
+      function showRejectionPopup( email, semester, type) {
+    let subject = type.toLowerCase().includes('oet') ? 'Your OET Course Certificates are Rejected' : 'Your OEHM Course Certificate  is Rejected';
+    let body = 'Kindly Resubmit the Certificates of the following courses : .\n';
+    
+    
+    
+        sendRejectionEmail( email, subject, body);
+    
+    
+    //document.getElementById('emailPopup').style.display = "block";
+}
+
+async function sendRejectionEmail(email, subject, body) {
+   const studentNames = getCheckedStudentNames();
+    const emailBody = "*"+studentNames.join('\n');
+    console.log(emailBody)
+
+    try {
+        const response = await axios.post('http://localhost:8000/sendCourseLinkRejectEmail', {
+            
+            email: email,
+            subject: subject,
+            body: body+emailBody
+        });
+        
+        if (response.data.success) {
+            alert('Email sent successfully');
+            // document.getElementById('emailPopup').style.display = "none";
+        } else {
+            alert('Failed to send email');
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        alert('An error occurred while sending the email');
+    }
+}
+
+
+      var deletestdID;
+      async function deletePermission() {
+         console.log("delete : " + deletestdID);
+         var sem = document.getElementById("sem").innerText;
+         console.log("sem" + sem);
+         var types = document.getElementById("types").innerText;
+         console.log(`http://localhost:8000/deleteStudentDataSem${sem}${types}Online`);
+         var deleteStudent = await axios({
+            url: `http://localhost:8000/deleteStudentDataOnline`,
+            method: "post",
+            data: { id: deletestdID, semester: sem }
+         });
+         console.log(deleteStudent);
+         console.log(deleteStudent.data.deleted);
+         var result = deleteStudent.data.deleted;
+         if (result == "yes") {
+            //alert("Student Deleted");
+            getdata();
+         } else {
+            alert("Error while deleting");
+         }
+      }
+
+
+      async function deleteStudent(id) {
+         console.log(id);
+         deletestdID = id;
+      }
+
+      async function complete(id,email,semester,type){
+         console.log(id,email,semester,type);
+         var complete = await axios({
+            url: `http://localhost:8000/getStudentDataOfflineAll`,
+            method: "post",
+            data: { id: id, email: email, semester: semester, type: type }
+            });
+            console.log(complete);
+            if(complete.data.result==1){
+               getdata();
+            }else{
+               alert("Error while deleting");
+            }
+      }
+
+
+function updateStudent() {
+  // Get values from the form
+  const id = document.getElementById('editId').value;
+  const name = document.getElementById('editName').value;
+  const semester = document.getElementById('editSemester').value;
+  const branch = document.getElementById('editBranch').value;
+  const email = document.getElementById('editEmail').value;
+  const type = document.getElementById('editType').value;
+  const courseName = document.getElementById('editCourseName').value;
+
+  // Call your update API here
+  // This is a placeholder - you'll need to implement the actual API call
+  console.log('Updating student:', { id, name, semester, branch, email, type, courseName });
+
+  // Close the modal
+  $('#editModal').modal('hide');
+
+  // Refresh the data
+  getdata();
+}
+
+function confirmDelete(id) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteStudent(id);
+    }
+  });
+}
+function editStudent(rollNumber, name, semester, branch, email, type, courseName, facultyName, facultyEmail, academicYear) {
+  document.getElementById('editRollNumber').value = rollNumber;
+  document.getElementById('editName').value = name;
+  document.getElementById('editSemester').value = semester;
+  document.getElementById('editBranch').value = branch;
+  document.getElementById('editEmail').value = email;
+  document.getElementById('editType').value = type;
+  document.getElementById('editCourseName').value = courseName;
+//   document.getElementById('editFacultyName').value = facultyName;
+//   document.getElementById('editFacultyEmail').value = facultyEmail;
+  document.getElementById('editAcademicYear').value = academicYear;
+  
+  $('#editModal').modal('show');
+}
+
+async function deleteStudent(id) {
+  try {
+    const response = await axios.post('http://localhost:8000/deleteStudentDataOffline', { id: id });
+    if (response.data.deleted === "yes") {
+      Swal.fire(
+        'Deleted!',
+        'The student has been deleted.',
+        'success'
+      );
+      getdata(); // Refresh the data
+    } else {
+      Swal.fire(
+        'Error',
+        'There was an error deleting the student.',
+        'error'
+      );
+    }
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    Swal.fire(
+      'Error',
+      'There was an error deleting the student.',
+      'error'
+    );
+  }
+}
+
+   </script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->
+
+</html>

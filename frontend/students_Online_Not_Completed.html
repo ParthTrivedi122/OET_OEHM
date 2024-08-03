@@ -437,26 +437,19 @@
                   if (list[i].course_approved == 1) {
                      tbody = tbody + `<tr>
                                        <td>${list[i].student_id}</td>
-                                       <td>
-                                         
-                                            ${list[i].student_name}
-                                          
-                                       </td>
+                                       <td> ${list[i].student_name}</td>
                                        <td id="sem">${list[i].semester}</td>
-                                                                              <td>${list[i].branch}</td>
-
+                                       <td>${list[i].branch}</td>
                                        <td>${list[i].domain}</td>
                                        <td id="types">${list[i].courses_type}</td>
                                        <td>${list[i].courses_enrolled}</td>
-                                          <td>${list[i].courses_links}</td>
+                                       <td>${list[i].courses_links}</td>
                                        <td>${list[i].total_hours}</td>
                                        <td>${list[i].final_hours}</td>
                                        <td><div class="btn btn-${list[i].completion_colour}" onclick="complete('${list[i].id}','${list[i].email}','${list[i].semester}','${list[i].courses_type}')">Mark as complete</div></td>
-                                       <td class="text-right">
-                                          <button type="button"  onclick="email('${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
-                                             
-<i class="fa-solid fa-envelope" style="color: #f10404;"></i>
-                        
+                                       <td class="text">
+                                          <button type="button" class="btn btn-danger btn-sm" onclick="email('${list[i].email}','${list[i].semester}','${list[i].courses_type}')">
+                                             <i class="fas fa-envelope"></i> Email
                                           </button>
                                        </td>
                                     </tr>
@@ -519,7 +512,9 @@ async function sendRejectionEmail(email, subject, body) {
         
         if (response.data.success) {
             alert('Email sent successfully');
-            // document.getElementById('emailPopup').style.display = "none";
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
         } else {
             alert('Failed to send email');
         }
