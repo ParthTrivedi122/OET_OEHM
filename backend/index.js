@@ -110,7 +110,7 @@ app.get("/offline",async(req,res)=>{
   }
 })
 
-app.get("/login",async(req,res)=>{
+app.get("/",async(req,res)=>{
   res.render("login.ejs")
 })
 
