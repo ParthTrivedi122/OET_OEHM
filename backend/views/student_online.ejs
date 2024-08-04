@@ -522,9 +522,7 @@
 
             if (response.data.success) {
                alert('Email sent successfully');
-               document.querySelectorAll('.checkbox').forEach(checkbox => {
-                  checkbox.checked = false;
-               });
+               getdata()
             } else {
                alert('Failed to send email');
             }

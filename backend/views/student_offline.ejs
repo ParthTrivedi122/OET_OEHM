@@ -298,14 +298,14 @@
                                     <th>Name</th>
                                     <th>Semester</th>
                                     <th>Branch</th>
-                                    <th>Domain</th>
+                                    <th>Email</th>
                                     <th>Course Type</th>
                                     <th>Courses Enrolled</th>
-                                    <th>Certificates Links</th>
-                                    <th> Hours</th>
-                                    <th>Total Hours</th>
-                                    <th>Completion Status</th>
-                                    <th class="text-right">Action</th>
+                                    <th>Faculty Name</th>
+                                    <th>Faculty Email</th>
+                                    <th>Enrolled Year</th>
+                                    <!-- <th>Approved Status</th> -->
+                                    <th>Action</th>
                                  </tr>
                               </thead>
                               <tbody id="tbody">
@@ -374,7 +374,7 @@
    <script src="/js/script.js"></script>
    <script>
       getdata();
-      function downloadExcel() {
+      async function downloadExcel() {
 
          // Create a new workbook
          const workbook = new ExcelJS.Workbook();
@@ -386,14 +386,12 @@
             'Name',
             'Semester',
             'Branch',
-            'Domain',
+            'Email',
             'Course Type',
             'Courses Enrolled',
-            'Courses Type',
-            'Hours',
-            'Final Hours',
-            
-            'Completion Status'
+            'Faculty Name',
+            'Faculty Email',          
+            'Enrolled year'
          ];
 
          // Add headers to the worksheet
@@ -423,7 +421,7 @@
                const a = document.createElement('a');
                a.href = url;
                a.download = 'table_data.xlsx';
-
+               
                // Append link to the body and trigger download
                document.body.appendChild(a);
                a.click();
@@ -435,6 +433,10 @@
             .catch(error => {
                console.error('Error generating Excel file:', error);
             });
+            var data= await axios({
+                  url:"/downloadData",
+                  method: 'post'
+               })
       }
 
       window.addEventListener('pageshow', function (event) {
@@ -453,41 +455,21 @@
          var semester = document.getElementById('semesterFilter').value;
          var type = document.getElementById('courseFilter').value;
          var branch = document.getElementById('branchFilter').value;
-         var data;
+         
 
          try {
-            data = await axios({
+            var data = await axios({
                url: "http://localhost:8000/getStudentDataOfflineAll",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
             console.log(data.data);
-            // console.log(data.data.result[0].domain);
-            //console.log(data.data.certificates);
+            
             var list = data.data;
-            //var course = data.data.course;
-            // list.forEach(student => {
-            //    // Concatenate domains
-            //    domain += student.domain.join(", ") + "<br>";
-
-            //    // Concatenate enrolled courses
-            //    enrolled += student.courses_enrolled.join("<br>") + "<br>";
-
-            //    // Concatenate total hours
-            //    hours += student.total_hours.join("<br>") + "<br>";
-
-            //    // Concatenate certificates
-            //    certificates += student.courses_links.join("<br>") + "<br>";
-            // });
-
-            // console.log("Domains:", domain);
-            // console.log("Enrolled Courses:", enrolled);
-            // console.log("Total Hours:", hours);
-            // console.log("Certificates:", certificates);
+            
             if (data) {
                for (let i = 0; i < list.length; i++) {
                   console.log(list[i].course_name);
-                  if (list[i].course_approved == 1) {
                      tbody = tbody + `<tr>
                                        <td>${list[i].roll_number}</td>
                                        <td>
@@ -499,12 +481,13 @@
                                        <td>${list[i].branch}</td>
 
                                        <td>${list[i].email}</td>
-                                       <td id="types">${list[i].type}</td>
-                                       <td>${list[i].course_name}</td>
-                                          <td>${list[i].faculty_name}</td>
+                                       <td id="types">${list[i].courses_type}</td>
+                                       <td>${list[i].courses_name}</td>
+                                          <td>${list[i].faculty_names}</td>
                                        <td>${list[i].faculty_email}</td>
                                        <td>${list[i].enrolled_academic_year}</td>
-                                       <td class="text-right">
+                                       <td></td>
+                                       <td class="text-center">
                                           <button type="button" class="btn btn-primary btn-sm" onclick="editStudent('${list[i].roll_number}', '${list[i].student_name}', '${list[i].enrolled_semester}', '${list[i].branch}', '${list[i].email}', '${list[i].type}', '${list[i].course_name}', '${list[i].faculty_name}', '${list[i].faculty_email}', '${list[i].enrolled_academic_year}')">
                                              <i class="fas fa-edit"></i> Edit
                                           </button>
@@ -514,7 +497,7 @@
                                        </td>
                                     </tr>
                                     `;
-                  }
+                  
                }
                document.getElementById('tbody').innerHTML = tbody;
             }

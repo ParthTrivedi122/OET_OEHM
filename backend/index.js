@@ -587,13 +587,74 @@ app.post("/changeAcademicYear",async(req,res)=>{
     res.json({result:1})
   })
 })
+
+// app.post("/getStudentDataOfflineAll", async (req, res) => {
+//   try {
+//     let query = `
+//       SELECT
+//         u.email,
+//         e.course_id,
+//         u.name as student_name,
+//         u.roll_number,
+//         u.branch,
+//         c.course_name,
+//         c.faculty_name,
+//         c.faculty_email,
+//         e.course_approved,
+//         e.type,
+//         e.enrolled_semester,
+//         e.enrolled_academic_year
+//       FROM users u
+//       JOIN enrollments e ON u.email = e.email
+//       JOIN courses_offline c ON e.course_id = c.course_code
+//       WHERE u.active = 1 AND e.course_completed = 0
+//     `;
+
+//     const { semester, branch, courseType, apprej } = req.fields;
+
+//     if (semester && semester !== "--Select Semester--") {
+//       query += ` AND e.enrolled_semester = '${semester}'`;
+//     }
+
+//     if (courseType && courseType !== "--Select Course Type--") {
+//       query += ` AND e.type = '${courseType}'`;
+//     }
+
+//     if (branch && branch !== "--Select Branch--") {
+//       query += ` AND u.branch = '${branch}'`;
+//     }
+
+//     // if (apprej === "approval") {
+//     //   query += ` AND e.course_approved = 0`;
+//     // } else if (apprej === "approved") {
+//     //   query += ` AND e.course_approved = 1`;
+//     // }
+
+//     console.log("Query is =", query);
+    
+//     const result = await new Promise((resolve, reject) => {
+//       con.query(query, function (err, result, fields) {
+//         if (err) reject(err);
+//         console.log(result);
+//         resolve(result);
+//       });
+//     });
+
+//     res.json(result);
+//   } catch (error) {
+//     console.error("Error in getStudentDataOfflineAll:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 app.post("/getStudentDataOfflineAll", async (req, res) => {
   try {
+    // Construct SQL query
     let query = `
       SELECT
         u.email,
         e.course_id,
-        u.name as student_name,
+        u.name AS student_name,
         u.roll_number,
         u.branch,
         c.course_name,
@@ -609,8 +670,10 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
       WHERE u.active = 1 AND e.course_completed = 0
     `;
 
+    // Extract filters from request
     const { semester, branch, courseType, apprej } = req.fields;
 
+    // Apply filters to the query
     if (semester && semester !== "--Select Semester--") {
       query += ` AND e.enrolled_semester = '${semester}'`;
     }
@@ -630,21 +693,70 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
     // }
 
     console.log("Query is =", query);
-    
+
+    // Execute the query
     const result = await new Promise((resolve, reject) => {
       con.query(query, function (err, result, fields) {
         if (err) reject(err);
-        console.log(result);
         resolve(result);
       });
     });
 
-    res.json(result);
+    // Initialize an object to hold aggregated student data
+    const studentData = {};
+
+    // Iterate through the result to group and aggregate data
+    result.forEach((student) => {
+      const key = `${student.email.trim()}_${student.roll_number.trim()}_${student.type.trim()}`;
+
+      // Initialize a new entry if it doesn't exist
+      if (!studentData[key]) {
+        studentData[key] = {
+          email: student.email,
+          student_name: student.student_name,
+          roll_number: student.roll_number,
+          branch: student.branch,
+          enrolled_semester: student.enrolled_semester,
+          enrolled_academic_year: student.enrolled_academic_year,
+          course_approved: student.course_approved,
+          courses_type: student.type,
+          courses_id:"",
+          courses_name: "",
+          faculty_names: "",
+          faculty_email: ""
+        };
+      }
+
+      // Append multiple values to respective fields
+      studentData[key].courses_name += (student.course_name || "N/A") + "<br>";
+      studentData[key].faculty_names += (student.faculty_name || "N/A") + "<br>";
+      studentData[key].faculty_email += (student.faculty_email || "N/A") + "<br>";
+      studentData[key].courses_id += (student.course_id || "N/A") + "<br>";
+    });
+
+    // Convert the aggregated data into an array
+    const formattedData = Object.values(studentData);
+    console.log("formatted Data=>",formattedData)
+    // Respond with the formatted data
+    res.json(formattedData);
+
   } catch (error) {
     console.error("Error in getStudentDataOfflineAll:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+app.post("/downloadData",async(req,res)=>{
+  let query="delete from enrollments where mode='offline' and course_approved=0";
+  const result = await new Promise((resolve, reject) => {
+    con.query(query, function (err, result, fields) {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+  res.json({"msg":1})
+})
+
 
 app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
   try {
@@ -674,7 +786,7 @@ app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
     const { semester, branch, courseType, apprej } = req.fields;
 
     if (semester && semester !== "--Select Semester--") {
-      query += ` AND u.semester = '${semester}'`;
+      query += ` AND e.enrolled_semester = '${semester}'`;
     }
     if (courseType && courseType !== "--Select Course Type--") {
       query += ` AND e.type = '${courseType}'`;

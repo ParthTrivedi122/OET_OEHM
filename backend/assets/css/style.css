@@ -1350,6 +1350,7 @@ div.dataTables_wrapper div.dataTables_info {
 	top: 0;
 	z-index: 1001;
 	height: 60px;
+  padding: 0px;
 }
 .header .header-left {
 	float: left;
