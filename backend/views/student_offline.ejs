@@ -19,6 +19,12 @@
    <link rel="stylesheet" href="/css/style.css">
    <link rel="icon" href="/img/logo-small.png" type="image/x-icon">
    <link rel="shortcut icon" href="/img/logo-small.png" type="image/x-icon">
+   <style>
+      .header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+   </style>
 </head>
 
 <body>
@@ -243,6 +249,10 @@
                         <li class="breadcrumb-item"><a href="admin.html">Dashboard</a></li>
                         <li class="breadcrumb-item active">Students</li>
                      </ul>
+                  </div>
+                  <div class="col-auto text-right float-right ml-auto">
+                     <input type="file" id="uploadCsvInput" style="display:none;" />
+                     <button id="uploadCsvButton">Upload CSV</button>
                   </div>
                   <div class="col-auto text-right float-right ml-auto">
                      <a href="#" class="btn btn-outline-primary mr-2" style="background-color: red;color: white;"
@@ -681,6 +691,28 @@ async function deleteStudent(id) {
     );
   }
 }
+
+$('#uploadCsvInput').change(function(event) {
+                var file = event.target.files[0];
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('file', file);
+
+                    $.ajax({
+                        url: '/upload-csv',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            alert('CSV uploaded successfully!');
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error uploading CSV: ' + error);
+                        }
+                    });
+                }
+            });
 
    </script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
