@@ -229,6 +229,9 @@
                <div class="col col-3 ">
                   <button class="btn btn-primary" onclick="getdata()">Apply Filter</button>
                </div>
+               <div class="col col-1 ">
+                  <button class="btn btn-primary" onclick="resetFilter()">Reset</button>
+               </div>
             </div>
             <div class="row">
                <div class="col-sm-12">
@@ -389,7 +392,12 @@
       var semester = document.getElementById('semesterFilter').value;
       var type = document.getElementById('courseFilter').value;
       var branch = document.getElementById('branchFilter').value;
-
+      async function resetFilter() {
+         document.getElementById('semesterFilter').value = "--Select Semester--";
+         document.getElementById('courseFilter').value = "--Select Course Type--";
+         document.getElementById('branchFilter').value = "--Select Branch--";
+         getdata()
+      }
 
       async function getdata() {
          var tbody = '';
