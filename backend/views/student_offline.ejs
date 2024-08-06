@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:43 GMT -->
-
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-   <title>Preskool - Students</title>
+   <title>Students Offline | KJSCE</title>
    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 
    <link rel="shortcut icon" href="/img/favicon.png">
@@ -62,67 +60,7 @@
                   </div>
                   <div class="noti-content">
                      <ul class="notification-list">
-                        <!-- <li class="notification-message">
-                           <a href="#">
-                              <div class="media">
-                                 <span class="avatar avatar-sm">
-                                    <img class="avatar-img rounded-circle" alt="User Image"
-                                       src="/img/profiles/avatar-02.jpg">
-                                 </span>
-                                 <div class="media-body">
-                                    <p class="noti-details"><span class="noti-title">Carlson Tech</span> has approved
-                                       <span class="noti-title">your estimate</span>
-                                    </p>
-                                    <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
-                                 </div>
-                              </div>
-                           </a>
-                        </li> -->
-                        <!-- <li class="notification-message">
-                           <a href="#">
-                              <div class="media">
-                                 <span class="avatar avatar-sm">
-                                    <img class="avatar-img rounded-circle" alt="User Image"
-                                       src="/img/profiles/avatar-11.jpg">
-                                 </span>
-                                 <div class="media-body">
-                                    <p class="noti-details"><span class="noti-title">International Software Inc</span>
-                                       has sent you a invoice in the amount of <span class="noti-title">$218</span></p>
-                                    <p class="noti-time"><span class="notification-time">6 mins ago</span></p>
-                                 </div>
-                              </div>
-                           </a>
-                        </li>
-                        <li class="notification-message">
-                           <a href="#">
-                              <div class="media">
-                                 <span class="avatar avatar-sm">
-                                    <img class="avatar-img rounded-circle" alt="User Image"
-                                       src="/img/profiles/avatar-17.jpg">
-                                 </span>
-                                 <div class="media-body">
-                                    <p class="noti-details"><span class="noti-title">John Hendry</span> sent a
-                                       cancellation request <span class="noti-title">Apple iPhone XR</span></p>
-                                    <p class="noti-time"><span class="notification-time">8 mins ago</span></p>
-                                 </div>
-                              </div>
-                           </a>
-                        </li>
-                        <li class="notification-message">
-                           <a href="#">
-                              <div class="media">
-                                 <span class="avatar avatar-sm">
-                                    <img class="avatar-img rounded-circle" alt="User Image"
-                                       src="/img/profiles/avatar-13.jpg">
-                                 </span>
-                                 <div class="media-body">
-                                    <p class="noti-details"><span class="noti-title">Mercury Software Inc</span> added a
-                                       new product <span class="noti-title">Apple MacBook Pro</span></p>
-                                    <p class="noti-time"><span class="notification-time">12 mins ago</span></p>
-                                 </div>
-                              </div>
-                           </a>
-                        </li> -->
+                       
                      </ul>
                   </div>
                   <div class="topnav-dropdown-footer">
@@ -136,18 +74,7 @@
                         alt="Ryan Taylor"></span>
                </a>
                <div class="dropdown-menu">
-                  <div class="user-header">
-                     <div class="avatar avatar-sm">
-                        <img src="/img/profiles/avatar-01.png" alt="User Image" class="avatar-img rounded-circle">
-                     </div>
-                     <div class="user-text">
-                        <h6>Ryan Taylor</h6>
-                        <p class="text-muted mb-0">Administrator</p>
-                     </div>
-                  </div>
-                  <a class="dropdown-item" href="profile.html">My Profile</a>
-                  <a class="dropdown-item" href="inbox.html">Inbox</a>
-                  <a class="dropdown-item" href="login.html">Logout</a>
+                  <a class="dropdown-item" onclick="logout()">Logout</a>
                </div>
             </li>
          </ul>
@@ -329,7 +256,7 @@
             </div>
          </div>
          <footer>
-            <p>Copyright © 2020 Dreamguys.</p>
+            <p>Copyright © KJ Somaiya College Of Engineering</p>
          </footer>
       </div>
    </div>
@@ -635,6 +562,16 @@ function updateStudent() {
   getdata();
 }
 
+async function logout() {
+         var data=await axios({
+            "url": "http://localhost:8000/logout",
+            "method": "post",
+
+         })
+         window.location.replace("http://localhost:8000/");
+         
+      }
+
 function confirmDelete(id) {
   Swal.fire({
     title: 'Are you sure?',
@@ -717,6 +654,5 @@ $('#uploadCsvInput').change(function(event) {
    </script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
-<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->
 
 </html>

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:43 GMT -->
 
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-   <title>Preskool - Students</title>
+   <title>Student History | KJSCE</title>
    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 
    <link rel="shortcut icon" href="/img/favicon.png">
@@ -136,18 +135,7 @@
                         alt="Ryan Taylor"></span>
                </a>
                <div class="dropdown-menu">
-                  <div class="user-header">
-                     <div class="avatar avatar-sm">
-                        <img src="/img/profiles/avatar-01.png" alt="User Image" class="avatar-img rounded-circle">
-                     </div>
-                     <div class="user-text">
-                        <h6>Ryan Taylor</h6>
-                        <p class="text-muted mb-0">Administrator</p>
-                     </div>
-                  </div>
-                  <a class="dropdown-item" href="profile.html">My Profile</a>
-                  <a class="dropdown-item" href="inbox.html">Inbox</a>
-                  <a class="dropdown-item" href="login.html">Logout</a>
+                  <a class="dropdown-item" onclick="logout()">Logout</a>
                </div>
             </li>
          </ul>
@@ -271,7 +259,7 @@
             </div>
          </div>
          <footer>
-            <p>Copyright © 2020 Dreamguys.</p>
+            <p>Copyright © KJ Somaiya College Of Engineering</p>
          </footer>
       </div>
    </div>
@@ -473,12 +461,19 @@
             console.log("error is :", e);
          }
       }
+      async function logout() {
+         var data=await axios({
+            "url": "http://localhost:8000/logout",
+            "method": "post",
 
+         })
+         window.location.replace("http://localhost:8000/");
+         
+      }
      
 
       
    </script>
 </body>
-<!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->
 
 </html>
