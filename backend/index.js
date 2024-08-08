@@ -19,7 +19,7 @@ app.use(cors({
   origin: 'http://127.0.0.1:5501', // Replace with your client's domain
   methods: 'GET,POST',
   allowedHeaders: 'Content-Type,Authorization',
-}));
+}));  
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -739,41 +739,9 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
 
     // Initialize an object to hold aggregated student data
     const studentData = {};
-
-    // Iterate through the result to group and aggregate data
-    result.forEach((student) => {
-      const key = `${student.email.trim()}_${student.roll_number.trim()}_${student.type.trim()}`;
-
-      // Initialize a new entry if it doesn't exist
-      if (!studentData[key]) {
-        studentData[key] = {
-          email: student.email,
-          student_name: student.student_name,
-          roll_number: student.roll_number,
-          branch: student.branch,
-          enrolled_semester: student.enrolled_semester,
-          enrolled_academic_year: student.enrolled_academic_year,
-          course_approved: student.course_approved,
-          courses_type: student.type,
-          courses_id:"",
-          courses_name: "",
-          faculty_names: "",
-          faculty_email: ""
-        };
-      }
-
-      // Append multiple values to respective fields
-      studentData[key].courses_name += (student.course_name || "N/A") + "<br>";
-      studentData[key].faculty_names += (student.faculty_name || "N/A") + "<br>";
-      studentData[key].faculty_email += (student.faculty_email || "N/A") + "<br>";
-      studentData[key].courses_id += (student.course_id || "N/A") + "<br>";
-    });
-
-    // Convert the aggregated data into an array
-    const formattedData = Object.values(studentData);
-    console.log("formatted Data=>",formattedData)
-    // Respond with the formatted data
-    res.json(formattedData);
+    console.log(result)
+    
+    res.json(result);
 
   } catch (error) {
     console.error("Error in getStudentDataOfflineAll:", error);
