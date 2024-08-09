@@ -721,12 +721,6 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
       query += ` AND u.branch = '${branch}'`;
     }
 
-    // if (apprej === "approval") {
-    //   query += ` AND e.course_approved = 0`;
-    // } else if (apprej === "approved") {
-    //   query += ` AND e.course_approved = 1`;
-    // }
-
     console.log("Query is =", query);
 
     // Execute the query
@@ -737,17 +731,60 @@ app.post("/getStudentDataOfflineAll", async (req, res) => {
       });
     });
 
-    // Initialize an object to hold aggregated student data
-    const studentData = {};
-    console.log(result)
-    
-    res.json(result);
+    // Prepare data with preferences
+    const studentDataWithPreferences = [];
+    const emailPreferenceMap = {};
+
+    result.forEach((row) => {
+      const email = row.email;
+      const type = row.type;
+
+      // Initialize preference counter and last type for each student if not exists
+      if (!emailPreferenceMap[email]) {
+        emailPreferenceMap[email] = {
+          preferenceCounter: 0,
+          lastType: null,
+        };
+      }
+
+      // Reset preference if type changes
+      if (emailPreferenceMap[email].lastType !== type) {
+        emailPreferenceMap[email].preferenceCounter = 0;
+      }
+
+      // Increment preference counter
+      emailPreferenceMap[email].preferenceCounter += 1;
+
+      // Update last type
+      emailPreferenceMap[email].lastType = type;
+
+      studentDataWithPreferences.push({
+        email: row.email,
+        course_id: row.course_id,
+        student_name: row.student_name,
+        roll_number: row.roll_number,
+        branch: row.branch,
+        course_name: row.course_name,
+        faculty_name: row.faculty_name,
+        faculty_email: row.faculty_email,
+        course_approved: row.course_approved,
+        type: row.type,
+        enrolled_semester: row.enrolled_semester,
+        enrolled_academic_year: row.enrolled_academic_year,
+        preference: emailPreferenceMap[email].preferenceCounter, // Add preference number
+      });
+    });
+
+    console.log(studentDataWithPreferences);
+
+    res.json(studentDataWithPreferences);
 
   } catch (error) {
     console.error("Error in getStudentDataOfflineAll:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 app.post("/downloadData",async(req,res)=>{
   let query="delete from enrollments where mode='offline' and course_approved=0";
@@ -759,6 +796,70 @@ app.post("/downloadData",async(req,res)=>{
   });
   res.json({"msg":1})
 })
+
+app.post("/deleteStudentDataOffline",async(req,res)=>{
+  try{
+  const {email,id,type,semester}=req.fields;
+  let query=`delete from enrollments where mode='offline'  and email='${email}' and course_id='${id}' and type='${type}' and enrolled_semester='${semester}'`;
+  const result = await new Promise((resolve, reject) => {
+    con.query(query, function (err, result, fields) {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+  res.json({"deleted":1})
+}catch(e){
+  res.json({"deleted":0})
+}
+})
+
+
+app.post("/updateStudentDataOffline",async(req,res)=>{
+  try{
+    console.log("hello update")
+  const {email,roll,branch,id,type,semester,oldType,oldId}=req.fields;
+  console.log(id)
+  let query=`Update  enrollments set course_id='${oldId}',type='${type}'  where mode='offline'  and email='${email}'  and type='${oldType}' and enrolled_semester='${semester}' and course_id='${id}'`;
+  console.log(query)
+  const results = await new Promise((resolve, reject) => {
+    con.query(query, function (err, result, fields) {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+  let querys=`Update  users set roll_number='${roll}' where  email='${email}' `;
+  console.log(querys)
+  const results2 = await new Promise((resolve, reject) => {
+    con.query(querys, function (err, result, fields) {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+  console.log("roll=>",results2)
+  res.json({"updated":1})
+}catch(e){
+  console.error("Error in updateStudentDataOffline:", e);
+  res.json({"updated":0})
+}
+})
+
+app.post("/getCourseIdOffline",async(req,res)=>{
+  try{
+  const {courseName}=req.fields;
+  let query=`select course_code from courses_offline where course_name='${courseName}'`;
+  const results = await new Promise((resolve, reject) => {
+    con.query(query, function (err, result, fields) {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+  console.log("result=>",results)
+  res.json({"id":results})
+}catch(e){
+  res.json({"msg":"NO Course"})
+}
+})
+
 
 
 app.post("/getStudentDataOnlineallCompleted", async (req, res) => {
@@ -979,7 +1080,157 @@ app.post("/getSubjectDataOffline", async (req, res) => {
 });
 
 
+// async function autoAllocateOfflineCourses() {
+//   const query = util.promisify(con.query).bind(con);
 
+//   try {
+//     console.log("Starting auto-allocation process");
+
+//     // Fetch all students with offline course preferences
+//     const students = await query(`
+//       SELECT DISTINCT e.email, e.enrolled_semester
+//       FROM enrollments e
+//       WHERE e.mode = 'OFFLINE'
+//     `);
+//     //console.log(Found ${students.length} students with offline preferences);
+
+//     // Fetch all offline courses
+//     const courses = await query(`
+//       SELECT course_id, type, enrolled_semester
+//       FROM enrollments
+//       WHERE mode = 'OFFLINE'
+//       GROUP BY course_id, type, enrolled_semester
+//     `);
+
+//     // Initialize course allocation counts
+//     const courseCounts = {};
+//     courses.forEach(course => {
+//       courseCounts[course.course_id] = 0;
+//     });
+
+//     // Initialize student allocations
+//     const studentAllocations = {};
+//     students.forEach(student => {
+//       studentAllocations[student.email] = { OET: null, OEHM: null };
+//     });
+
+//     // Process each student's preferences
+//     for (const student of students) {
+//       //console.log(Processing preferences for student: ${student.email});
+      
+//       // Fetch student's preferences in the order they were inserted
+//       const preferences = await query(
+//         `
+//         SELECT course_id, type
+//         FROM enrollments
+//         WHERE email = ? AND mode = 'OFFLINE' AND enrolled_semester = ?
+//         `,
+//         [student.email, student.enrolled_semester]
+//       );
+
+//      // console.log(Preferences for ${student.email}:, preferences.map(p => p.course_id).join(', '));
+
+//       for (const pref of preferences) {
+//         const courseType = pref.type; // 'OET' or 'OEHM'
+        
+//         // Skip if student already allocated for this course type
+//         if (studentAllocations[student.email][courseType]) continue;
+
+//         // Check if course is available for student's semester
+//         const course = courses.find(c => c.course_id === pref.course_id && c.enrolled_semester === student.enrolled_semester);
+//         if (!course) continue;
+
+//         // Allocate if course count is less than 20
+//         if (courseCounts[pref.course_id] < 20) {
+//           courseCounts[pref.course_id]++;
+//           studentAllocations[student.email][courseType] = pref.course_id;
+//          // console.log(Allocated ${courseType} course ${pref.course_id} to ${student.email});
+//         }
+
+//         // Break if both OET and OEHM are allocated
+//         if (studentAllocations[student.email].OET && studentAllocations[student.email].OEHM) break;
+//       }
+//     }
+
+//     // Filter out courses with less than 20 students
+//     const viableCourses = Object.entries(courseCounts)
+//       .filter(([courseId, count]) => count >= 20)
+//       .map(([courseId]) => courseId);
+
+//     console.log("Viable courses:", viableCourses);
+
+//     // Final allocation and cleanup
+//     for (const [email, allocation] of Object.entries(studentAllocations)) {
+//       //console.log(Finalizing allocation for student: ${email});
+      
+//       const approvedCourses = [];
+//       for (const type of ['OET', 'OEHM']) {
+//         if (allocation[type] && viableCourses.includes(allocation[type])) {
+//           approvedCourses.push(allocation[type]);
+//           //console.log(Approving ${type} course ${allocation[type]} for ${email});
+//           const updateResult = await query(
+//             `
+//             UPDATE enrollments
+//             SET course_approved = 1
+//             WHERE email = ? AND course_id = ? AND type = ? AND mode = 'OFFLINE'
+//           `,
+//             [email, allocation[type], type]
+//           );
+//           //console.log(Update result: ${JSON.stringify(updateResult)});
+//         }
+//       }
+
+//       // Remove all unapproved courses for this student
+//      // console.log(Removing unapproved courses for ${email});
+//       let deleteQuery;
+//       let deleteParams;
+//       if (approvedCourses.length > 0) {
+//         deleteQuery = `
+//           DELETE FROM enrollments
+//           WHERE email = ? AND mode = 'OFFLINE' AND course_id NOT IN (?)
+//         `;
+//         deleteParams = [email, approvedCourses];
+//       } else {
+//         deleteQuery = `
+//           DELETE FROM enrollments
+//           WHERE email = ? AND mode = 'OFFLINE'
+//         `;
+//         deleteParams = [email];
+//       }
+      
+//       try {
+//         const deleteResult = await query(deleteQuery, deleteParams);
+//        // console.log(Delete result: ${JSON.stringify(deleteResult)});
+//       } catch (error) {
+//        // console.error(Error deleting unapproved courses for ${email}:, error);
+//       }
+//     }
+
+//     console.log("Auto-allocation completed successfully");
+//     return { success: true, message: "Auto-allocation completed successfully" };
+//   } catch (error) {
+//     console.error("Error during auto-allocation:", error);
+//     return {
+//       success: false,
+//       message: "Error during auto-allocation",
+//       error: error.message,
+//     };
+//   }
+// }
+
+// app.post("/api/auto-allocate-offline-courses", async (req, res) => {
+//   try {
+//     const result = await autoAllocateOfflineCourses();
+//     res.json(result);
+//   } catch (error) {
+//     console.error("Error in auto-allocation process:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error in auto-allocation process",
+//       error: error.message,
+//     });
+//   }
+// });
 
 
 
