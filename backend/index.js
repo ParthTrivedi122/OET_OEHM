@@ -1,5 +1,16 @@
 const express= require('express');
 const app= express();
+
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+      if (req.header('x-forwarded-proto') !== 'https') {
+          res.redirect(`https://${req.header('host')}${req.url}`);
+      } 
+          next();
+      
+  });
+}
+
 const cors = require('cors');
 const mysql = require('mysql');
 const formidable = require('express-formidable');
@@ -7,9 +18,20 @@ const nodemailer = require('nodemailer');
 const multer = require('multer');
 app.set('view engine', 'ejs');
 const path = require('path');
- const session = require("express-session");
+const session = require("express-session");
+require('dotenv').config();
+const helmet = require('helmet');
+app.use(helmet());
+
+const morgan = require('morgan');
+app.use(morgan('combined'));
 
 
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 const PORT=8000;
 
 app.use(cors());
@@ -21,44 +43,25 @@ app.use(cors({
   allowedHeaders: 'Content-Type,Authorization',
 }));  
 
-const upload = multer({ dest: 'uploads/' });
 
-var con = mysql.createConnection({
-  host: "35.200.243.194",
-  database: "oet-oehm",
-  user: "kjsce",
-  password: "diHgof-5pejqu-taxkuq"
+// var con = mysql.createConnection({
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_NAME,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASS
+// });
+
+const con = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Define the upload CSV route
-app.post('/upload-csv', upload.single('file'), (req, res) => {
-    const filePath = req.file.path;
 
-    // Read and parse the CSV file
-    const results = [];
-    fs.createReadStream(filePath)
-        .pipe(csvParser())
-        .on('data', (data) => results.push(data))
-        .on('end', async () => {
-            try {
-                // Insert data into the enrollments table
-                for (const row of results) {
-                    await db.query('INSERT INTO enrollments SET ?', row);
-                }
-
-                // Send success response
-                res.status(200).send('CSV uploaded successfully');
-
-                // Delete the uploaded file after processing
-                fs.unlink(filePath, (err) => {
-                    if (err) console.error('Error deleting file:', err);
-                });
-            } catch (error) {
-                console.error('Error uploading CSV:', error);
-                res.status(500).send('Error uploading CSV');
-            }
-        });
-});
 
 app.use(formidable());
 // var con = mysql.createConnection({
@@ -74,7 +77,7 @@ app.use(formidable());
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: true }
   }))
 
 // const dbConfig = {
@@ -105,8 +108,8 @@ con.connect(function(err) {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'parthtrivedi690@gmail.com',
-      pass: 'ojfv kdyc hdqs  wpqa'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS  
   },
   tls: {
     rejectUnauthorized: false
