@@ -19,7 +19,6 @@ const nodemailer = require('nodemailer');
 // const multer = require('multer');
 // app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'backend/views'));
-const path = require('path');
 const session = require("express-session");
 require('dotenv').config();
 const helmet = require('helmet');
