@@ -21,7 +21,6 @@
       .header {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    position: fixed;
 }
    </style>
 </head>
@@ -128,11 +127,11 @@
                  <input type="hidden" id="editId">
                  <div class="form-group">
                    <label for="editName">Name</label>
-                   <input type="text" class="form-control" id="editName" disabled>
+                   <input type="text" class="form-control" id="editName">
                  </div>
                  <div class="form-group">
                    <label for="editSemester">Semester</label>
-                   <input type="text" class="form-control" id="editSemester" disabled>
+                   <input type="text" class="form-control" id="editSemester">
                  </div>
                  <div class="form-group">
                   <label for="editSemester">Roll No</label>
@@ -140,11 +139,11 @@
                 </div>
                  <div class="form-group">
                    <label for="editBranch">Branch</label>
-                   <input type="text" class="form-control" id="editBranch" disabled>
+                   <input type="text" class="form-control" id="editBranch">
                  </div>
                  <div class="form-group">
                    <label for="editEmail">Email</label>
-                   <input type="email" class="form-control" id="editEmail" disabled>
+                   <input type="email" class="form-control" id="editEmail">
                  </div>
                  <div class="form-group">
                    <label for="editType">Course Type</label>
@@ -156,7 +155,7 @@
                  </div>
                  <div class="form-group">
                   <label for="editCourseName">Academic Year</label>
-                  <input type="text" class="form-control" id="editAcademicYear" disabled>
+                  <input type="text" class="form-control" id="editAcademicYear">
                 </div>
                </form>
              </div>
@@ -178,8 +177,7 @@
                         <li class="breadcrumb-item active">Students</li>
                      </ul>
                   </div>
-                  <!-- <button id="autoAllocateBtn">Start Auto Allocation</button>
-                  <div id="result"></div> -->
+                  
                   <div class="col-auto text-right float-right ml-auto">
                      <a href="#" class="btn btn-outline-primary mr-2" style="background-color: red;color: white;"
                         onclick="downloadExcel()"><i class="fas fa-download"></i> Download</a>
@@ -237,10 +235,10 @@
                                     <th>Email</th>
                                     <th>Course Type</th>
                                     <th>Courses Enrolled</th>
-                                    <th>Preference</th>
                                     <th>Faculty Name</th>
                                     <th>Faculty Email</th>
                                     <th>Enrolled Year</th>
+                                    <!-- <th>Approved Status</th> -->
                                     <th>Action</th>
                                  </tr>
                               </thead>
@@ -406,7 +404,7 @@
             if (data) {
                for (let i = 0; i < list.length; i++) {
                   console.log(list[i].course_name);
-                     tbody = tbody + `<tr style="background-color:${list[i].color?"lightblue":"lightgreen"}">
+                     tbody = tbody + `<tr>
                                        <td>${list[i].roll_number}</td>
                                        <td>
                                          
@@ -417,18 +415,17 @@
                                        <td>${list[i].branch}</td>
 
                                        <td>${list[i].email}</td>
-                                       <td >${list[i].type}</td>
-                                       <td >${list[i].course_name}</td>
-                                       <td>${list[i].preference}</td>
-                                          <td>${list[i].faculty_name}</td>
+                                       <td id="types">${list[i].courses_type}</td>
+                                       <td>${list[i].courses_name}</td>
+                                          <td>${list[i].faculty_names}</td>
                                        <td>${list[i].faculty_email}</td>
                                        <td>${list[i].enrolled_academic_year}</td>
-                                       
+                                       <td></td>
                                        <td class="text-center">
-                                          <button type="button" class="btn btn-primary btn-sm" onclick="editStudent('${list[i].roll_number}', '${list[i].student_name}', '${list[i].enrolled_semester}', '${list[i].branch}', '${list[i].email}', '${list[i].type}', '${list[i].course_name}', '${list[i].faculty_name}', '${list[i].faculty_email}', '${list[i].enrolled_academic_year}','${list[i].course_id}')">
+                                          <button type="button" class="btn btn-primary btn-sm" onclick="editStudent('${list[i].roll_number}', '${list[i].student_name}', '${list[i].enrolled_semester}', '${list[i].branch}', '${list[i].email}', '${list[i].type}', '${list[i].course_name}', '${list[i].faculty_name}', '${list[i].faculty_email}', '${list[i].enrolled_academic_year}')">
                                              <i class="fas fa-edit"></i> Edit
                                           </button>
-                                          <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('${list[i].email}','${list[i].course_id}','${list[i].type}','${list[i].enrolled_semester}')">
+                                          <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('${list[i].roll_number}')">
                                              <i class="fas fa-trash"></i> Delete
                                           </button>
                                        </td>
@@ -470,7 +467,7 @@
     //document.getElementById('emailPopup').style.display = "block";
 }
 
- async function sendRejectionEmail(email, subject, body) {
+async function sendRejectionEmail(email, subject, body) {
    const studentNames = getCheckedStudentNames();
     const emailBody = "*"+studentNames.join('\n');
     console.log(emailBody)
@@ -539,43 +536,21 @@
                alert("Error while deleting");
             }
       }
-var oldcourse='';
-var oldtype='';
 
-async function updateStudent() {
+
+function updateStudent() {
   // Get values from the form
-  const roll = document.getElementById('editRollNumber').value;
+  const id = document.getElementById('editId').value;
+  const name = document.getElementById('editName').value;
   const semester = document.getElementById('editSemester').value;
   const branch = document.getElementById('editBranch').value;
   const email = document.getElementById('editEmail').value;
   const type = document.getElementById('editType').value;
   const courseName = document.getElementById('editCourseName').value;
-  var oldCourse=oldcourse;
-  console.log(courseName)
-  var ids= await axios({
-   url: `http://localhost:8000/getCourseIdOffline`,
-   method: "post",
-   data: { courseName: courseName }
-  })
-  console.log(ids.data.id[0].course_code)
-  var oldId=ids.data.id[0].course_code;
-  var id= await axios({
-   url: `http://localhost:8000/getCourseIdOffline`,
-   method: "post",
-   data: { courseName: oldCourse }
-  })
-  console.log(id.data.id[0].course_code)
-  var oldType=oldtype;
-  console.log(oldType)
-   const data=await axios({
-      url: `http://localhost:8000/updateStudentDataOffline`,
-      method: "post",
-      data: {roll:roll,semester:semester,branch:branch,email:email,oldType:oldType,type:type,id:id.data.id[0].course_code,oldId:oldId}
-   })
-   console.log(data)
+
   // Call your update API here
   // This is a placeholder - you'll need to implement the actual API call
-  //console.log('Updating student:', { id, name, semester, branch, email, type, courseName });
+  console.log('Updating student:', { id, name, semester, branch, email, type, courseName });
 
   // Close the modal
   $('#editModal').modal('hide');
@@ -594,7 +569,7 @@ async function logout() {
          
       }
 
-function confirmDelete(email,id,type,semester) {
+function confirmDelete(id) {
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -605,11 +580,11 @@ function confirmDelete(email,id,type,semester) {
     confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
-      deleteStudent(email,id,type,semester);
+      deleteStudent(id);
     }
   });
 }
-function editStudent(rollNumber, name, semester, branch, email, type, courseName, facultyName, facultyEmail, academicYear,course_id) {
+function editStudent(rollNumber, name, semester, branch, email, type, courseName, facultyName, facultyEmail, academicYear) {
   document.getElementById('editRollNumber').value = rollNumber;
   document.getElementById('editName').value = name;
   document.getElementById('editSemester').value = semester;
@@ -617,16 +592,17 @@ function editStudent(rollNumber, name, semester, branch, email, type, courseName
   document.getElementById('editEmail').value = email;
   document.getElementById('editType').value = type;
   document.getElementById('editCourseName').value = courseName;
+//   document.getElementById('editFacultyName').value = facultyName;
+//   document.getElementById('editFacultyEmail').value = facultyEmail;
   document.getElementById('editAcademicYear').value = academicYear;
-  oldcourse=courseName;
-  oldtype=type;
+  
   $('#editModal').modal('show');
 }
 
-async function deleteStudent(email,id,type,semester) {
+async function deleteStudent(id) {
   try {
-    const response = await axios.post('http://localhost:8000/deleteStudentDataOffline', { email:email,id:id,type:type,semester:semester });
-    if (response.data.deleted === 1) {
+    const response = await axios.post('http://localhost:8000/deleteStudentDataOffline', { id: id });
+    if (response.data.deleted === "yes") {
       Swal.fire(
         'Deleted!',
         'The student has been deleted.',
@@ -673,39 +649,6 @@ $('#uploadCsvInput').change(function(event) {
             });
 
    </script>
-   <!-- <script>
-      document.getElementById('autoAllocateBtn').addEventListener('click', function() {
-          this.disabled = true;
-          this.textContent = 'Processing...';
-          document.getElementById('result').textContent = '';
-  
-          fetch('/api/auto-allocate-offline-courses', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  document.getElementById('result').textContent = 'Auto allocation completed successfully!';
-                  document.getElementById('result').style.color = 'green';
-              } else {
-                  document.getElementById('result').textContent = 'Error: ' + data.message;
-                  document.getElementById('result').style.color = 'red';
-              }
-          })
-          .catch(error => {
-              console.error('Error:', error);
-              document.getElementById('result').textContent = 'An error occurred. Please try again.';
-              document.getElementById('result').style.color = 'red';
-          })
-          .finally(() => {
-              this.disabled = false;
-              this.textContent = 'Start Auto Allocation';
-          });
-      });
-  </script> -->
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
