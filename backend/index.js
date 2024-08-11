@@ -17,15 +17,15 @@ const mysql = require('mysql');
 const formidable = require('express-formidable');
 const nodemailer = require('nodemailer');
 // const multer = require('multer');
-// app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'backend/views'));
+app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'backend/views'));
 const session = require("express-session");
 require('dotenv').config();
-const helmet = require('helmet');
-app.use(helmet());
+// const helmet = require('helmet');
+// app.use(helmet());
 
-const morgan = require('morgan');
-app.use(morgan('combined'));
+// const morgan = require('morgan');
+// app.use(morgan('combined'));
 
 
 
@@ -90,7 +90,7 @@ app.use(formidable());
 // };
 
 // const con = mysql.createPool({ ...dbConfig });
-app.use(express.static(path.join(__dirname, 'backend/assets')));
+app.use(express.static(path.join(__dirname, 'assets')));
 
 app.post("/getdata",async(req,res)=>{
    
