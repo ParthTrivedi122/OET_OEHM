@@ -78,7 +78,7 @@ app.use(formidable());
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: true, maxAge: 60000 }
   }))
 
 // const dbConfig = {
