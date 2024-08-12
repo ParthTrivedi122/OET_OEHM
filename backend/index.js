@@ -118,6 +118,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.get("/home",async(req,res)=>{
+  console.log(req.session.login)
   if(req.session.login==1){
     res.render("home.ejs")
   }else{
@@ -126,6 +127,7 @@ app.get("/home",async(req,res)=>{
 })
 
 app.get("/history",async(req,res)=>{
+  console.log(req.session.login)
   if(req.session.login==1){
     res.render("student_history.ejs")
   }else{
@@ -134,6 +136,7 @@ app.get("/history",async(req,res)=>{
 })
 
 app.get("/online",async(req,res)=>{
+  console.log(req.session.login)
   if(req.session.login==1){
     res.render("student_online.ejs")
   }else{
@@ -142,6 +145,7 @@ app.get("/online",async(req,res)=>{
 })
 
 app.get("/offline",async(req,res)=>{
+  console.log(req.session.login)
   if(req.session.login==1){
     res.render("student_offline.ejs")
   }else{
