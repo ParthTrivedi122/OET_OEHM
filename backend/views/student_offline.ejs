@@ -372,7 +372,7 @@
 
          try {
             var data = await axios({
-               url: "http://localhost:8000/getStudentDataOfflineAll",
+               url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOfflineAll",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
@@ -453,7 +453,7 @@
     console.log(emailBody)
 
     try {
-        const response = await axios.post('http://localhost:8000/sendCourseLinkRejectEmail', {
+        const response = await axios.post('https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/sendCourseLinkRejectEmail', {
             
             email: email,
             subject: subject,
@@ -479,9 +479,9 @@
          var sem = document.getElementById("sem").innerText;
          console.log("sem" + sem);
          var types = document.getElementById("types").innerText;
-         console.log(`http://localhost:8000/deleteStudentDataSem${sem}${types}Online`);
+         console.log(`https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/deleteStudentDataSem${sem}${types}Online`);
          var deleteStudent = await axios({
-            url: `http://localhost:8000/deleteStudentDataOnline`,
+            url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/deleteStudentDataOnline`,
             method: "post",
             data: { id: deletestdID, semester: sem }
          });
@@ -505,7 +505,7 @@
       async function complete(id,email,semester,type){
          console.log(id,email,semester,type);
          var complete = await axios({
-            url: `http://localhost:8000/getStudentDataOfflineAll`,
+            url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOfflineAll`,
             method: "post",
             data: { id: id, email: email, semester: semester, type: type }
             });
@@ -530,14 +530,14 @@ async function updateStudent() {
   var oldCourse=oldcourse;
   console.log(courseName)
   var ids= await axios({
-   url: `http://localhost:8000/getCourseIdOffline`,
+   url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getCourseIdOffline`,
    method: "post",
    data: { courseName: courseName }
   })
   console.log(ids.data.id[0].course_code)
   var oldId=ids.data.id[0].course_code;
   var id= await axios({
-   url: `http://localhost:8000/getCourseIdOffline`,
+   url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getCourseIdOffline`,
    method: "post",
    data: { courseName: oldCourse }
   })
@@ -545,7 +545,7 @@ async function updateStudent() {
   var oldType=oldtype;
   console.log(oldType)
    const data=await axios({
-      url: `http://localhost:8000/updateStudentDataOffline`,
+      url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/updateStudentDataOffline`,
       method: "post",
       data: {roll:roll,semester:semester,branch:branch,email:email,oldType:oldType,type:type,id:id.data.id[0].course_code,oldId:oldId}
    })
@@ -563,11 +563,11 @@ async function updateStudent() {
 
 async function logout() {
          var data=await axios({
-            "url": "http://localhost:8000/logout",
+            "url": "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/logout",
             "method": "post",
 
          })
-         window.location.replace("http://localhost:8000/");
+         window.location.replace("https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/");
          
       }
 
@@ -602,7 +602,7 @@ function editStudent(rollNumber, name, semester, branch, email, type, courseName
 
 async function deleteStudent(email,id,type,semester) {
   try {
-    const response = await axios.post('http://localhost:8000/deleteStudentDataOffline', { email:email,id:id,type:type,semester:semester });
+    const response = await axios.post('https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/deleteStudentDataOffline', { email:email,id:id,type:type,semester:semester });
     if (response.data.deleted === 1) {
       Swal.fire(
         'Deleted!',

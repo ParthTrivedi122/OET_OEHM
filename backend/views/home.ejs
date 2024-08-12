@@ -148,7 +148,7 @@
    <div class="main-wrapper" >
       <div class="header" style="position: fixed;top: 0px;">
          <div class="header-left">
-            <a href="http://localhost:8000/home" class="logo">
+            <a href="https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/home" class="logo">
                <img src="/img/logo.svg" alt="Logo">
             </a>
             <a href="index.html" class="logo logo-small">
@@ -399,7 +399,7 @@
       //    console.log(apprej)
       //    try {
       //       data = await axios({
-      //          url: "http://localhost:8000/getStudentDataOnlineall",
+      //          url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOnlineall",
       //          method: "post",
       //          data: { courseType: type, branch: branch, apprej: "approval" }
       //       });
@@ -465,7 +465,7 @@
       async function getdata() {
     try {
         const response = await axios({
-            url: "http://localhost:8000/getStudentDataOnlineall",
+            url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOnlineall",
             method: "post",
             data: { courseType: "--Select Course Type--", branch: "--Select Branch--", apprej: "approval" }
         });
@@ -536,7 +536,7 @@
 
       async function setYear(){
          var year = await axios({
-            url:"http://localhost:8000/getYear",
+            url:"https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getYear",
             method:"post",
 
          })
@@ -549,7 +549,7 @@
       async function restSem() {
          try {
             var data = await axios({
-               "url": "http://localhost:8000/resetSem",
+               "url": "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/resetSem",
                "method": "POST",
             })
             if (data.data.result == 1) {
@@ -562,11 +562,11 @@
 
       async function logout() {
          var data=await axios({
-            "url": "http://localhost:8000/logout",
+            "url": "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/logout",
             "method": "post",
 
          })
-         window.location.replace("http://localhost:8000/");
+         window.location.replace("https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/");
          
       }
 
@@ -587,7 +587,7 @@
 
       async function sendRejectionEmail(id, email, subject, body) {
          try {
-            const response = await axios.post('http://localhost:8000/sendRejectionEmail', {
+            const response = await axios.post('https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/sendRejectionEmail', {
                id: id,
                email: email,
                subject: subject,
@@ -619,7 +619,7 @@
             console.log(approve, id, email, semester, type);
             try {
                var response = await axios({
-                  url: "http://localhost:8000/webhook/trigger-reonboarding",
+                  url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/webhook/trigger-reonboarding",
                   method: "post",
                   data: { approve: approve, id: id, userEmail: email, semester: semester, type: type }
                });
@@ -633,7 +633,7 @@
             }
          } else {
             var response = await axios({
-               url: "http://localhost:8000/approve",
+               url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/approve",
                method: "post",
                data: { approve: approve, id: id, email: email, semester: semester, type: type }
             });
@@ -649,7 +649,7 @@
       async function changeAcademicYear(){
          var year=document.getElementById("academic_year").value;
          var response = await axios({
-            url: "http://localhost:8000/changeAcademicYear",
+            url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/changeAcademicYear",
             method: "post",
             data: { year: year }
          });

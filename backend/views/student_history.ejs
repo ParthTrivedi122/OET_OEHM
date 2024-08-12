@@ -320,7 +320,7 @@
 
          try {
             data = await axios({
-               url: "http://localhost:8000/getStudentDataOnlineallCompleted",
+               url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOnlineallCompleted",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
@@ -381,11 +381,11 @@
       }
       async function logout() {
          var data=await axios({
-            "url": "http://localhost:8000/logout",
+            "url": "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/logout",
             "method": "post",
 
          })
-         window.location.replace("http://localhost:8000/");
+         window.location.replace("https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/");
          
       }
      
