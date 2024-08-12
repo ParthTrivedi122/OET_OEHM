@@ -64,7 +64,7 @@ const con = mysql.createPool({
 });
 
 
-const sessionStore = new MySQLStore(con);
+const sessionStore = new MySQLStore({}, con);
 app.use(formidable());
 // var con = mysql.createConnection({
 //     host: "35.200.243.194",
