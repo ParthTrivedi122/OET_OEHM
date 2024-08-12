@@ -20,6 +20,7 @@ const nodemailer = require('nodemailer');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 const session = require("express-session");
+const MySQLStore = require('express-mysql-session')(session);
 require('dotenv').config();
 // const helmet = require('helmet');
 // app.use(helmet());
@@ -63,7 +64,7 @@ const con = mysql.createPool({
 });
 
 
-
+const sessionStore = new MySQLStore(con);
 app.use(formidable());
 // var con = mysql.createConnection({
 //     host: "35.200.243.194",
@@ -74,12 +75,17 @@ app.use(formidable());
 
 
 
-  app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true, maxAge: 1000 * 60 * 60 * 24 }
-  }))
+app.use(session({
+  key: 'keybord_cat',  // You can set a custom cookie name here
+  secret: 'G6#8bVhF%t9Q&z7P@3k2Lm*n8^R5Wy',   // Replace with a strong secret key
+  store: sessionStore,
+  resave: false,               // Don't resave session if nothing is modified
+  saveUninitialized: false,    // Don't create session until something is stored
+  cookie: {
+      secure: false,           // Set to true if using HTTPS
+      maxAge: 1000 * 60 * 60 * 24 // Session expiration time in milliseconds (e.g., 1 day)
+  }
+}));
 
 // const dbConfig = {
 //   host: process.env.DB_HOST,
