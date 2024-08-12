@@ -83,7 +83,7 @@ app.use(session({
   resave: false,               // Don't resave session if nothing is modified
   saveUninitialized: false,    // Don't create session until something is stored
   cookie: {
-      secure: false,           // Set to true if using HTTPS
+      secure: ture,           // Set to true if using HTTPS
       maxAge: 1000 * 60 * 60 * 24 // Session expiration time in milliseconds (e.g., 1 day)
   }
 }));
