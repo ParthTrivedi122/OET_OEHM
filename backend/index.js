@@ -17,8 +17,8 @@ const mysql = require('mysql');
 const formidable = require('express-formidable');
 const nodemailer = require('nodemailer');
 // const multer = require('multer');
-app.set('view engine', 'ejs');
-// app.set('views', path.join(__dirname, 'backend/views'));
+//app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 const session = require("express-session");
 require('dotenv').config();
 // const helmet = require('helmet');
@@ -1448,35 +1448,35 @@ app.post("/webhook/trigger-reonboarding",async (req,res)=>{
 //   }
 // });
 
-app.post("/deleteStudentDataOnline",async(req,res)=>{
-  // console.log(req.fields.id);
- con.query("delete FROM students_online WHERE student_id='"+req.fields.id+"' and semester='"+req.fields.semester+"'", function (err, result, fields) {
-   if (err) throw err;
-   // console.log("result is"+result);
-   res.json({"deleted":"yes"});
- });
+// app.post("/deleteStudentDataOnline",async(req,res)=>{
+//   // console.log(req.fields.id);
+//  con.query("delete FROM students_online WHERE student_id='"+req.fields.id+"' and semester='"+req.fields.semester+"'", function (err, result, fields) {
+//    if (err) throw err;
+//    // console.log("result is"+result);
+//    res.json({"deleted":"yes"});
+//  });
 
-});
+// });
 
-app.post("/deleteStudentDataSem5OehmOnline",async(req,res)=>{
-   // console.log(req.fields.id);
-  con.query("delete FROM students_online_oehm WHERE student_id="+req.fields.id+"", function (err, result, fields) {
-    if (err) throw err;
-    // console.log("result is"+result);
-    res.json({"deleted":"yes"});
-  });
+// app.post("/deleteStudentDataSem5OehmOnline",async(req,res)=>{
+//    // console.log(req.fields.id);
+//   con.query("delete FROM students_online_oehm WHERE student_id="+req.fields.id+"", function (err, result, fields) {
+//     if (err) throw err;
+//     // console.log("result is"+result);
+//     res.json({"deleted":"yes"});
+//   });
 
-});
+// });
 
-app.post("/deleteStudentDataSem5OetOnline",async(req,res)=>{
+// app.post("/deleteStudentDataSem5OetOnline",async(req,res)=>{
    
-  con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
-    if (err) throw err;
-    // console.log(result);
-    res.json({"deleted":"yes"});
-  });
+//   con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
+//     if (err) throw err;
+//     // console.log(result);
+//     res.json({"deleted":"yes"});
+//   });
 
-});
+// });
 
 
 // app.post("/deleteSubjectData",async(req,res)=>{
@@ -1517,26 +1517,26 @@ app.post("/deleteStudentDataSem5OetOnline",async(req,res)=>{
 //  });
 // });
 
-app.post("/deleteStudentDataSem6OetOnline",async(req,res)=>{
+// app.post("/deleteStudentDataSem6OetOnline",async(req,res)=>{
    
-  con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
-    if (err) throw err;
-    // console.log(result);
-    res.json({"deleted":"yes"});
-  });
+//   con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
+//     if (err) throw err;
+//     // console.log(result);
+//     res.json({"deleted":"yes"});
+//   });
 
-});
+// });
 
 
-app.post("/deleteStudentDataSem7OetOnline",async(req,res)=>{
+// app.post("/deleteStudentDataSem7OetOnline",async(req,res)=>{
    
-  con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
-    if (err) throw err;
-    // console.log(result);
-    res.json({"deleted":"yes"});
-  });
+//   con.query("delete FROM students_online_oet WHERE student_id='"+req.fields.id+"'", function (err, result, fields) {
+//     if (err) throw err;
+//     // console.log(result);
+//     res.json({"deleted":"yes"});
+//   });
 
-});
+// });
 
 
 
