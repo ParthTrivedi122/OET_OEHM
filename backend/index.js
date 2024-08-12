@@ -17,7 +17,7 @@ const mysql = require('mysql');
 const formidable = require('express-formidable');
 const nodemailer = require('nodemailer');
 // const multer = require('multer');
-//app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 const session = require("express-session");
 require('dotenv').config();
