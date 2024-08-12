@@ -20,7 +20,7 @@ const nodemailer = require('nodemailer');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 const session = require("express-session");
-const MySQLStore = require('express-mysql-session')(session);
+const MemoryStore = require('session-memory-store')(session);
 require('dotenv').config();
 // const helmet = require('helmet');
 // app.use(helmet());
@@ -64,7 +64,8 @@ const con = mysql.createPool({
 });
 
 
-const sessionStore = new MySQLStore({}, con);
+// const sessionStore = new MySQLStore({}, con);
+const sessionStore = new MemoryStore();
 app.use(formidable());
 // var con = mysql.createConnection({
 //     host: "35.200.243.194",
