@@ -1568,10 +1568,10 @@ app.post("/webhook/trigger-reonboarding",async (req,res)=>{
 app.listen(PORT,(err)=>{
     if(err)
     {
-         // console.log("Something went wrong");
+          console.log("Something went wrong");
     }
     else
     {
-         // console.log("Server Succesfully started on Port :",PORT);
+         console.log("Server Succesfully started on Port :",PORT);
     }
 })
