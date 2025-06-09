@@ -64,17 +64,17 @@
 
 
                   <li>
-                     <a href="https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/home"><i class="fas fa-user-graduate"></i> <span>
+                     <a href="http://localhost:8000/home"><i class="fas fa-user-graduate"></i> <span>
                            Dashboard</span><span class="menu-arrow"></span></a>
 
                   </li>
                   <li class="active">
-                     <a href="https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/online"><i class="fas fa-code"></i> <span>Students Online</span>
+                     <a href="http://localhost:8000/online"><i class="fas fa-code"></i> <span>Students Online</span>
                         <span class="menu-arrow"></span></a>
 
                   </li>
                   <li class="">
-                     <a href="https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/history"><i class="fas fa-chalkboard-teacher"></i> <span> Student
+                     <a href="http://localhost:8000/history"><i class="fas fa-chalkboard-teacher"></i> <span> Student
                            History</span>
                         <span class="menu-arrow"></span></a>
                      <ul>
@@ -82,7 +82,7 @@
                      </ul>
                   </li>
                   <li class="">
-                     <a href="https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/offline"><i class="fas fa-building"></i> <span> Students
+                     <a href="http://localhost:8000/offline"><i class="fas fa-building"></i> <span> Students
                            Offline</span> <span class="menu-arrow"></span></a>
 
                   </li>
@@ -316,7 +316,7 @@
 
          try {
             data = await axios({
-               url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/getStudentDataOnlineall",
+               url: "http://localhost:8000/getStudentDataOnlineall",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch, apprej: "approved" }
             });
@@ -384,11 +384,11 @@
 
       async function logout() {
          var data=await axios({
-            "url": "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/logout",
+            "url": "http://localhost:8000/logout",
             "method": "post",
 
          })
-         window.location.replace("https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/");
+         window.location.replace("http://localhost:8000/");
          
       }
       
@@ -400,7 +400,7 @@
          course_ids = links; // Assuming you want to store all links in course_ids
          console.log(course_ids);
          var data = await axios({
-            url: "https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/rejectCertificate",
+            url: "http://localhost:8000/rejectCertificate",
             method: "post",
             data: { courses_links: links, email: email }
          })
@@ -435,7 +435,7 @@
          console.log(emailBody)
 
          try {
-            const response = await axios.post('https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/sendCourseLinkRejectEmail', {
+            const response = await axios.post('http://localhost:8000/sendCourseLinkRejectEmail', {
 
                email: email,
                subject: subject,
@@ -461,9 +461,9 @@
          var sem = document.getElementById("sem").innerText;
          console.log("sem" + sem);
          var types = document.getElementById("types").innerText;
-         console.log(`https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/deleteStudentDataSem${sem}${types}Online`);
+         console.log(`http://localhost:8000/deleteStudentDataSem${sem}${types}Online`);
          var deleteStudent = await axios({
-            url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/deleteStudentDataOnline`,
+            url: `http://localhost:8000/deleteStudentDataOnline`,
             method: "post",
             data: { id: deletestdID, semester: sem }
          });
@@ -491,7 +491,7 @@
          course_ids = links;
          console.log(course_ids);
          var complete = await axios({
-            url: `https://oet-oehm-p5nf-git-main-parthtrivedi122s-projects.vercel.app/completeStudentDataOnline`,
+            url: `http://localhost:8000/completeStudentDataOnline`,
             method: "post",
             data: { id: id, email: email, semester: semester, type: type,courses_links:links }
          });

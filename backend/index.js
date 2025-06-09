@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const cors = require('cors');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const formidable = require('express-formidable');
 const nodemailer = require('nodemailer');
 // const multer = require('multer');
@@ -58,9 +58,12 @@ const con = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  port:process.env.DB_port,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  connectTimeout: 1000000,  // 10 seconds for initial connection
+  acquireTimeout: 1000000   // 10 seconds to get a connection from pool
 });
 
 
