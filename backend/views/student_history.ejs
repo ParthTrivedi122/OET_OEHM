@@ -65,24 +65,24 @@
 
 
                   <li >
-                     <a href="http://localhost:8000/home"><i class="fas fa-user-graduate"></i> <span> Dashboard</span><span
+                     <a href="https://oet-oehm-p5nf.vercel.app/home"><i class="fas fa-user-graduate"></i> <span> Dashboard</span><span
                            class="menu-arrow"></span></a>
 
                   </li >
                   <li >
-                     <a href="http://localhost:8000/online"><i class="fas fa-code"></i> <span>Students Online</span> <span
+                     <a href="https://oet-oehm-p5nf.vercel.app/online"><i class="fas fa-code"></i> <span>Students Online</span> <span
                            class="menu-arrow"></span></a>
 
                   </li>
                   <li class="active">
-                     <a href="http://localhost:8000/history"><i class="fas fa-chalkboard-teacher"></i> <span> Student History</span>
+                     <a href="https://oet-oehm-p5nf.vercel.app/history"><i class="fas fa-chalkboard-teacher"></i> <span> Student History</span>
                         <span class="menu-arrow"></span></a>
                      <ul>
 
                      </ul>
                   </li>
                   <li class="">
-                     <a href="http://localhost:8000/offline"><i class="fas fa-building"></i> <span> Students Offline</span> <span
+                     <a href="https://oet-oehm-p5nf.vercel.app/offline"><i class="fas fa-building"></i> <span> Students Offline</span> <span
                            class="menu-arrow"></span></a>
 
                   </li>
@@ -320,7 +320,7 @@
 
          try {
             data = await axios({
-               url: "http://localhost:8000/getStudentDataOnlineallCompleted",
+               url: "https://oet-oehm-p5nf.vercel.app/getStudentDataOnlineallCompleted",
                method: "post",
                data: { semester: semester, courseType: type, branch: branch,apprej:"approved" }
             });
@@ -381,11 +381,11 @@
       }
       async function logout() {
          var data=await axios({
-            "url": "http://localhost:8000/logout",
+            "url": "https://oet-oehm-p5nf.vercel.app/logout",
             "method": "post",
 
          })
-         window.location.replace("http://localhost:8000/");
+         window.location.replace("https://oet-oehm-p5nf.vercel.app/");
          
       }
      
